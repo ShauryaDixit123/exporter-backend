@@ -1,6 +1,3 @@
-//go:build wireinject
-// +build wireinject
-
 package usersrepo
 
 import (
