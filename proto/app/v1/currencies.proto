@@ -1,0 +1,93 @@
+syntax = "proto3";
+
+package app.v1;
+
+import "app/v1/error.proto";
+
+option java_multiple_files = true;
+option go_package = "./protogen/app/v1";
+
+message ListCurrenciesRequest {
+    enum SortField {
+        SORT_FIELD_UNSPECIFIED = 0;
+        SORT_FIELD_ISO = 1;
+        SORT_FIELD_CREATED_AT = 2;
+        SORT_FIELD_MODIFIED_AT = 3;
+        SORT_FIELD_NAME = 4;
+    }
+
+    enum SortOrder {
+        SORT_ORDER_UNSPECIFIED = 0;
+        SORT_ORDER_ASC = 1;
+        SORT_ORDER_DESC = 2;
+    }
+
+    optional uint32 page_number = 1;
+    optional uint32 items_per_page = 2;
+    SortField sort_field = 3;
+    SortOrder sort_order = 4;
+    optional string search = 5;
+    bool show_disabled = 6;
+}
+
+message CreateCurrencyRequest {
+    string iso_code = 1;
+    string name = 2;
+    string symbol = 3;
+}
+
+message UpdateCurrencyRequest {
+    string iso_code = 1;
+    string name = 2;
+    string symbol = 3;
+    bool is_active = 4;
+}
+
+message DeleteCurrencyRequest {
+    string iso_code = 1;
+}
+
+message FetchCurrencyRequest {
+    string iso_code = 1;
+}
+
+message ActiviateCurrencyRequest {
+    string iso_code = 1;
+}
+
+message DeactiviateCurrencyRequest {
+    string iso_code = 1;
+}
+
+message CurrenciesResponse {
+    message Pagingation {
+        uint32 current_page = 1;
+        uint32 total_results = 2;
+        uint32 items_per_page = 3;
+    }
+
+    message Data {
+        Pagingation pagination = 1;
+        repeated Currency currencies = 2;
+    }
+
+    bool isSuccess = 1;
+    Data data = 2;
+    ErrorResponse error = 3;
+
+}
+
+message CurrencyResponse {
+    bool isSuccess = 1;
+    Currency data = 2;
+    ErrorResponse error = 3;
+}
+
+message Currency {
+    string iso_code = 1;
+    string name = 2;
+    string symbol = 3;
+    bool is_active = 4;
+    string created_at = 5;
+    string mofified_at = 6;
+}

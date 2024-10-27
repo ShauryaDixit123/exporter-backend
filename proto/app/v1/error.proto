@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package app.v1;
+
+option java_multiple_files = true; 
+option go_package = "./protogen/app/v1";
+
+message ErrorResponse {
+  string code = 1;
+  string message = 2;
+  repeated InputError input_errors = 3;
+}
+
+message InputError {
+  string field = 1;
+  string error = 2;
+}

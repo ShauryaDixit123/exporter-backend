@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+package app.v1;
+
+import "app/v1/countries.proto";
+import "app/v1/currencies.proto";
+
+option java_multiple_files = true;
+option go_package = "./protogen/app/v1";
+
+service CountriesService {
+    rpc List(ListCountriesRequest) returns (CountriesResponse);
+    rpc Fetch(FetchCountryRequest) returns (CountryResponse);
+    rpc Create(CreateCountryRequest) returns (CountryResponse);
+    rpc Update(UpdateCountryRequest) returns (CountryResponse);
+    rpc Delete(DeleteCountryRequest) returns (CountryResponse);
+    rpc Activate(ActiviateCountryRequest) returns (CountryResponse);
+    rpc Deactivate(DeactiviateCountryRequest) returns (CountryResponse);
+}
+
+service CurrenciesService {
+    rpc List(ListCurrenciesRequest) returns (CurrenciesResponse);
+    rpc Fetch(FetchCurrencyRequest) returns (CurrencyResponse);
+    rpc Create(CreateCurrencyRequest) returns (CurrencyResponse);
+    rpc Update(UpdateCurrencyRequest) returns (CurrencyResponse);
+    rpc Delete(DeleteCurrencyRequest) returns (CurrencyResponse);
+    rpc Activate(ActiviateCurrencyRequest) returns (CurrencyResponse);
+    rpc Deactivate(DeactiviateCurrencyRequest) returns (CurrencyResponse);
+}
+
