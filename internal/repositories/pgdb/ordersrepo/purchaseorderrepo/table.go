@@ -1,6 +1,6 @@
 package purchaseorderrepo
 
-const TABLE = "purchase_order"
+const TABLE = "purchase_orders"
 
 const (
 	ID                      = "id"
@@ -18,6 +18,7 @@ const (
 	REJECTION_REASON        = "rejection_reason"
 	STATUS                  = "status"
 	SUPPLIER_ID             = "supplier_id"
+	BUYER_ID                = "buyer_id"
 	SHIPMENT_MODE           = "shipment_mode"
 	CREATED_BY              = "created_by"
 	MODIFIED_BY             = "modified_by"

@@ -8,6 +8,7 @@ import (
 
 	"github.com/doug-martin/goqu/v9"
 	"github.com/doug-martin/goqu/v9/exp"
+	"github.com/google/uuid"
 )
 
 type Repository struct {
@@ -27,30 +28,35 @@ func New(
 
 func (r *Repository) InsertOne(
 	data rdbms.PurchaseOrder,
-) error {
+) (string, error) {
+	var id uuid.UUID
 	result := r.goquDB.Insert(
 		TABLE,
 	).Prepared(true).Rows(
 		goqu.Record{
-			ID:                   data.Id,
-			ACCOUNT_ID:           data.AccountId,
-			PO_NUMBER:            data.PONumber,
-			DUE_DATE:             data.DueDate,
-			SHIPMENT_TERMS:       data.ShipmentMode,
-			STATUS:               data.Status,
-			TERMS_AND_CONDITIONS: data.TermsAndConditions,
-			REMARKS:              data.Remarks,
-			REJECTION_REASON:     data.RejectionReason,
-			SUPPLIER_ID:          data.SupplierId,
-			SHIPMENT_MODE:        data.ShipmentMode,
-			CREATED_BY:           data.CreatedBy,
+			ACCOUNT_ID:              data.AccountId,
+			PO_NUMBER:               data.PONumber,
+			FLOW_INSTANCE_ID:        data.FlowInstanceId,
+			FLOW_INSTANCE_PARAMS_ID: data.FlowInstanceParamsId,
+			DUE_DATE:                data.DueDate,
+			SHIPMENT_TERMS:          data.ShipmentMode,
+			STATUS:                  data.Status,
+			TERMS_AND_CONDITIONS:    data.TermsAndConditions,
+			REMARKS:                 data.Remarks,
+			REJECTION_REASON:        data.RejectionReason,
+			PICKUP_LOCATION_ID:      data.PickupUserLocationId,
+			DROP_LOCATION_ID:        data.DropUserLocationId,
+			SUPPLIER_ID:             data.SupplierId,
+			BUYER_ID:                data.BuyerId,
+			SHIPMENT_MODE:           data.ShipmentMode,
+			CREATED_BY:              data.CreatedBy,
 		},
 	)
-	_, err := result.Executor().Exec()
+	_, err := result.Returning(ID).Executor().ScanVal(&id)
 	if err != nil {
-		return err
+		return "", err
 	}
-	return nil
+	return id.String(), nil
 }
 
 func (r *Repository) SelectOne(id string) (rdbms.PurchaseOrder, error) {
@@ -83,7 +89,6 @@ func (r *Repository) UpdateOne(
 	data rdbms.PurchaseOrder,
 ) error {
 	record := goqu.Record{
-		USER_ID:                 data.UserId,
 		PO_NUMBER:               data.PONumber,
 		DUE_DATE:                data.DueDate,
 		FLOW_INSTANCE_ID:        data.FlowInstanceId,

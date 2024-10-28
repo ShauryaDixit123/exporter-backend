@@ -4,8 +4,8 @@ import (
 	"exporterbackend/internal/core/domain/repositories/rdbms"
 	"exporterbackend/internal/core/ports"
 	"exporterbackend/pkg/logging"
+	"fmt"
 
-	"github.com/gofrs/uuid"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -28,6 +28,7 @@ func New(logger logging.Logger,
 func (s *Service) Create(
 	u rdbms.CreateUserI,
 ) (string, error) {
+	fmt.Println("dnddnnd1")
 	og, er := s.usersRepo.GetById(rdbms.Id{
 		Id: u.CreatedBy,
 	})
@@ -43,19 +44,16 @@ func (s *Service) Create(
 	if er != nil {
 		return "", er
 	}
-	uid, er := uuid.FromString(id)
-	if er != nil {
-		return "", er
-	}
-	usrac, er := s.accountsRepo.GetUserAccountById(rdbms.Id{
-		Id: u.CreatedBy,
-	})
+	fmt.Println("dnddnnd")
+	usrac, er := s.accountsRepo.GetUserAccountById(
+		u.CreatedBy,
+	)
 	if er != nil {
 		return "", er
 	}
 	if u.IsParent && og.IsParent {
 		newac, er := s.accountsRepo.Insert(rdbms.CreateAccountI{
-			PrimaryUserID: uid,
+			PrimaryUserID: id,
 		})
 		if er != nil {
 			return "", er
@@ -72,7 +70,7 @@ func (s *Service) Create(
 		}); er != nil {
 			return "", er
 		}
-		return id, nil
+		return id.String(), nil
 	}
 	if er := s.accountsRepo.InsertAccountUser(rdbms.CreateAccountUserI{
 		AccountId: usrac.Id,
@@ -80,7 +78,7 @@ func (s *Service) Create(
 	}); er != nil {
 		return "", er
 	}
-	return id, nil
+	return id.String(), nil
 }
 
 func (s *Service) prepareUser(u rdbms.CreateUserI) (string, error) {

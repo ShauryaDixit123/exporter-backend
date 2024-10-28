@@ -1,12 +1,16 @@
 package ports
 
-import "exporterbackend/internal/core/domain/repositories/rdbms"
+import (
+	"exporterbackend/internal/core/domain/repositories/rdbms"
+
+	"github.com/google/uuid"
+)
 
 type RdbmsWorkflowRepository interface {
 	Insert(
 		m rdbms.WorkflowI,
-	) (string, error)
-	Get(
+	) (uuid.UUID, error)
+	GetDetails(
 		id string,
 	) ([]rdbms.GetWorkflowI, error)
 	GetAll(
@@ -14,7 +18,7 @@ type RdbmsWorkflowRepository interface {
 	) ([]rdbms.WorkflowI, error)
 	InsertFlow(
 		f rdbms.FlowI,
-	) (string, error)
+	) (uuid.UUID, error)
 	InsertFlowParams(
 		f []rdbms.FlowParamI,
 	) error
@@ -25,18 +29,36 @@ type RdbmsWorkflowRepository interface {
 		f []rdbms.FlowInstanceParamI,
 	) error
 	GetFlows(
-		wid string,
+		wid uuid.UUID,
 	) ([]rdbms.FlowI, error)
 	GetFlowParams(
 		fpid string,
-	) ([]rdbms.FlowParamI, error)
+	) ([]rdbms.GetFlowParamsResponseI, error)
+	CreateFlowInstanceAccount(
+		f rdbms.CreateFlowInstanceAccountI,
+	) error
+	GetWorkflowByType(
+		f rdbms.GetWorkflowByType,
+	) (rdbms.WorkflowI, error)
+	Get(
+		id string,
+	) (rdbms.WorkflowI, error)
+	GetFlowInstance(
+		f rdbms.GetFlowInstance,
+	) (*rdbms.GetFlowInstanceResponseI, error)
+	GetFlowInstanceParams(
+		f rdbms.GetFlowInstance,
+	) (*rdbms.GetFlowInstanceParamsResponseI, error)
 }
 
 type WorkflowService interface {
-	Create(m rdbms.CreateWorkflowI) error
+	Create(m rdbms.CreateWorkflowI) (string, error)
 	CreateWorkflowInstance(
 		m rdbms.CreateWorkflowInstanceI,
-	) error
+	) (string, error)
 	Get(id string) ([]rdbms.GetWorkflowI, error)
 	GetAll(of string) ([]rdbms.WorkflowI, error)
+	AttachToWorkflow(
+		d rdbms.AttachWorkflowReqI,
+	) (rdbms.AttachWorkflowI, error)
 }

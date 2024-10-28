@@ -3,15 +3,16 @@ package rdbms
 import (
 	"time"
 
-	"github.com/gofrs/uuid"
+	"github.com/google/uuid"
 )
 
 type AccountI struct {
-	Id            int       `db:"id" json:"id"`
-	PrimaryUserID uuid.UUID `db:"primary_user_id" json:"primary_user_id"`
-	IsActive      bool      `db:"is_active" json:"is_active"`
-	CreatedAt     time.Time `db:"created_at" json:"created_at"`
-	ModifiedAt    time.Time `db:"modified_at" json:"modified_at"`
+	Id              int       `db:"id" json:"id"`
+	PrimaryUserID   uuid.UUID `db:"primary_user_id" json:"primary_user_id"`
+	IsActive        bool      `db:"is_active" json:"is_active"`
+	DefaultWorkflow string    `db:"default_workflow" json:"default_workflow"`
+	CreatedAt       time.Time `db:"created_at" json:"created_at"`
+	ModifiedAt      time.Time `db:"modified_at" json:"modified_at"`
 }
 type AccountsUsersMap struct {
 	ID         int       `db:"id" json:"id"`
@@ -25,11 +26,11 @@ type CreateAccountI struct {
 	IsActive      bool      `db:"is_active" json:"is_active"`
 }
 type CreateAccountUserI struct {
-	AccountId int    `json:"account_id" db:"account_id"`
-	UserId    string `json:"user_id" db:"user_id"`
+	AccountId int       `json:"account_id" db:"account_id"`
+	UserId    uuid.UUID `json:"user_id" db:"user_id"`
 }
 
 type CreateFlowInstanceAccountI struct {
-	FlowInstanceId string `db:"flow_instance_id" json:"flow_instance_id"`
+	FlowInstanceId string `db:"instance_id" json:"instance_id"`
 	AccountId      int    `db:"account_id" json:"account_id"`
 }

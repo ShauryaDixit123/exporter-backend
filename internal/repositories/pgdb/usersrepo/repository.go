@@ -5,6 +5,7 @@ import (
 	"exporterbackend/pkg/logging"
 
 	"github.com/doug-martin/goqu/v9"
+	"github.com/google/uuid"
 )
 
 type Repository struct {
@@ -20,20 +21,21 @@ func New(logger logging.Logger,
 	}
 }
 
-func (r *Repository) Insert(d rdbms.CreateUserI) (string, error) {
-	var id rdbms.Id
-	if er := r.dbClient.Insert(TABLE).Rows(
+func (r *Repository) Insert(d rdbms.CreateUserI) (uuid.UUID, error) {
+	var id uuid.UUID
+	if _, er := r.dbClient.Insert(TABLE).Rows(
 		goqu.Record{
-			NAME:      d.Name,
-			EMAIL:     d.Email,
-			PASSWORD:  d.Password,
-			ROLE_ID:   d.RoleId,
-			IS_PARENT: d.IsParent,
+			NAME:                d.Name,
+			EMAIL:               d.Email,
+			PASSWORD:            d.Password,
+			ROLE_ID:             d.RoleId,
+			IS_PARENT:           d.IsParent,
+			PRIMARY_LOCATION_ID: d.PrimaryLocationID,
 		},
-	).Returning("id").Executor().ScanStructs(&id); er != nil {
-		return "", er
+	).Returning(ID).Executor().ScanVal(&id); er != nil {
+		return uuid.UUID{}, er
 	}
-	return id.Id, nil
+	return id, nil
 }
 
 func (r *Repository) GetById(id rdbms.Id) (rdbms.UserI, error) {

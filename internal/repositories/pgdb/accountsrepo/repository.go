@@ -45,22 +45,23 @@ func (r *Repository) InsertAccountUser(d rdbms.CreateAccountUserI) error {
 	return nil
 }
 
-func (r *Repository) GetById(id rdbms.Id) (rdbms.AccountI, error) {
+func (r *Repository) GetById(id int) (rdbms.AccountI, error) {
 	var acc rdbms.AccountI
 	if _, er := r.dbClient.From(TABLE).Select(
 		ID,
 		PRIMARY_USER_ID,
 		IS_ACTIVE,
+		DEFAULT_WORKFLOW,
 		CREATED_AT,
 		MODIFIED_AT,
 	).Where(goqu.Ex{
-		ID: id.Id,
+		ID: id,
 	}).ScanStruct(&acc); er != nil {
 		return rdbms.AccountI{}, er
 	}
 	return acc, nil
 }
-func (r *Repository) GetUserAccountById(id rdbms.Id) (rdbms.AccountI, error) {
+func (r *Repository) GetUserAccountById(id string) (rdbms.AccountI, error) {
 	var acc rdbms.AccountI
 	if _, er := r.dbClient.From(TABLE).Select(
 		ID,
@@ -68,7 +69,7 @@ func (r *Repository) GetUserAccountById(id rdbms.Id) (rdbms.AccountI, error) {
 		IS_ACTIVE,
 		CREATED_AT,
 		MODIFIED_AT,
-	).Join(goqu.I(TABLE_JOINED), goqu.On(goqu.I(ACCOUNT_ID).Eq(ID))).ScanStruct(&acc); er != nil {
+	).Join(goqu.I(TABLE_JOINED), goqu.On(goqu.I(PRIMARY_USER_ID).Eq(id))).ScanStruct(&acc); er != nil {
 		return rdbms.AccountI{}, er
 	}
 	return acc, nil
@@ -77,10 +78,10 @@ func (r *Repository) GetUserAccountById(id rdbms.Id) (rdbms.AccountI, error) {
 func (r *Repository) InsertFlowInstanceAccount(
 	d rdbms.CreateFlowInstanceAccountI,
 ) error {
-	if _, er := r.dbClient.Insert(TABLE_JOINED).Rows(
+	if _, er := r.dbClient.Insert(TABLE_ACCOUNT_INSTANCE).Rows(
 		goqu.Record{
-			ACCOUNT_ID:       d.AccountId,
-			FLOW_INSTANCE_ID: d.FlowInstanceId,
+			ACCOUNT_ID:  d.AccountId,
+			INSTANCE_ID: d.FlowInstanceId,
 		},
 	).Returning("id").Executor().Exec(); er != nil {
 		return er

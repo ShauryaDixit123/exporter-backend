@@ -1,7 +1,7 @@
 -- +goose Up
 -- +goose StatementBegin
 CREATE TABLE IF NOT EXISTS po_so_lineitems (
-    id VARCHAR(64) PRIMARY KEY NOT NULL,
+    id UUID UNIQUE NOT NULL DEFAULT uuid_generate_v4(),
     po_id VARCHAR(64) NOT NULL,
     so_id VARCHAR(64),
     li_ref_id VARCHAR(64),

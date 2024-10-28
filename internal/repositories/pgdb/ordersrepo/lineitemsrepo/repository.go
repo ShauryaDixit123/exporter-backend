@@ -31,7 +31,6 @@ func (r *Repository) Insert(
 	query := []goqu.Record{}
 	for _, v := range data {
 		query = append(query, goqu.Record{
-			ID:            v.Id,
 			PO_ID:         v.PoId,
 			SO_ID:         v.SoId,
 			LI_REF_ID:     v.LiRefId,

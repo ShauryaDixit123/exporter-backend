@@ -11,10 +11,13 @@ const TABLE_FLOW = "flows"
 const TABLE_FLOW_PARAMS = "flow_params"
 const TABLE_FLOW_INSTANCE = "flow_instances"
 const TABLE_FLOW_INSTANCE_PARAMS = "flow_instance_params"
+const TABLE_FLOW_INSTANCES_ACCOUNTS = "flow_instances_accounts"
 const (
-	ID   = "id"
-	NAME = "name"
-	TYPE = "type"
+	ID           = "id"
+	NAME         = "name"
+	TYPE         = "type"
+	ACCOUNT_ID   = "account_id"
+	IS_COMPLETED = "is_completed"
 )
 
 const (
@@ -58,4 +61,5 @@ const (
 	INSTANCE_PARAM_TYPE      = "type"
 	INSTANCE_PARAM_MANDATORY = "mandatory"
 	INSTANCE_PARAM_VALUE     = "value"
+	INSTANCE_PARAM_APPROVED  = "approved"
 )

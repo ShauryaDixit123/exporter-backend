@@ -67,7 +67,7 @@ func InitializeApp(appName configs.AppName, pgDbConfig configs.PgDbConfig, logCo
 	purchaseorderrepoRepository := purchaseorderrepo.New(logger, database)
 	lineitemsrepoRepository := lineitemsrepo.New(logger, database)
 	salesorderrepoRepository := salesorderrepo.New(logger, database)
-	orderssrvService := orderssrv.New(logger, purchaseorderrepoRepository, lineitemsrepoRepository, salesorderrepoRepository, workflowrepoRepository)
+	orderssrvService := orderssrv.New(logger, purchaseorderrepoRepository, lineitemsrepoRepository, salesorderrepoRepository, accountsrepoRepository, workflowssrvService)
 	ordersHandler := orders.NewHandler(logger, orderssrvService)
 	ordersRoutes := orders.New(ordersHandler)
 	v1Routes := v1.New(routes, currenciesRoutes, usersRoutes, workflowsRoutes, ordersRoutes)

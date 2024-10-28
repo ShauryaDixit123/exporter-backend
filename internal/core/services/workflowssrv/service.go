@@ -1,9 +1,11 @@
 package workflowssrv
 
 import (
+	"errors"
 	"exporterbackend/internal/core/domain/repositories/rdbms"
 	"exporterbackend/internal/core/ports"
 	"exporterbackend/pkg/logging"
+	"fmt"
 
 	"github.com/google/uuid"
 )
@@ -22,13 +24,15 @@ func New(logger logging.Logger, workflowRepo ports.RdbmsWorkflowRepository, acco
 	}
 }
 
-func (s *Service) Create(m rdbms.CreateWorkflowI) error {
+func (s *Service) Create(m rdbms.CreateWorkflowI) (string, error) {
 	id, er := s.workflowRepo.Insert(rdbms.WorkflowI{
-		Name: m.Name,
-		Type: m.Type,
+		Name:      m.Name,
+		Type:      m.Type,
+		AccountId: m.AccountId,
 	})
 	if er != nil {
-		return er
+		return "", er
+
 	}
 	for _, v := range m.Flows {
 		fl := rdbms.FlowI{
@@ -42,7 +46,7 @@ func (s *Service) Create(m rdbms.CreateWorkflowI) error {
 		}
 		flId, er := s.workflowRepo.InsertFlow(fl)
 		if er != nil {
-			return er
+			return "", er
 		}
 		ar := make([]rdbms.FlowParamI, 0)
 		for _, val := range v.FlowParams {
@@ -54,16 +58,21 @@ func (s *Service) Create(m rdbms.CreateWorkflowI) error {
 			})
 		}
 		if er = s.workflowRepo.InsertFlowParams(ar); er != nil {
-			return er
+			return "", er
+
 		}
 	}
-	return nil
+	return id.String(), nil
 }
 
-func (s *Service) CreateWorkflowInstance(m rdbms.CreateWorkflowInstanceI) error {
-	fls, er := s.workflowRepo.GetFlows(m.Wid)
+func (s *Service) CreateWorkflowInstance(m rdbms.CreateWorkflowInstanceI) (string, error) {
+	wid, er := uuid.Parse(m.Wid)
 	if er != nil {
-		return er
+		return "", er
+	}
+	fls, er := s.workflowRepo.GetFlows(wid)
+	if er != nil {
+		return "", er
 	}
 	instId := uuid.New()
 	for _, v := range fls {
@@ -79,11 +88,13 @@ func (s *Service) CreateWorkflowInstance(m rdbms.CreateWorkflowInstanceI) error 
 			InstanceID:  instId.String(),
 		})
 		if er != nil {
-			return er
+			return "", er
+
 		}
 		fp, er := s.workflowRepo.GetFlowParams(v.ID)
 		if er != nil {
-			return er
+			return "", er
+
 		}
 		for _, k := range fp {
 			ar = append(ar, rdbms.FlowInstanceParamI{
@@ -95,21 +106,76 @@ func (s *Service) CreateWorkflowInstance(m rdbms.CreateWorkflowInstanceI) error 
 			})
 		}
 		if er := s.workflowRepo.InsertFlowInstanceParam(ar); er != nil {
-			return er
+			return "", er
+
 		}
 	}
 	if er := s.accountsRepo.InsertFlowInstanceAccount(rdbms.CreateFlowInstanceAccountI{
-		AccountId:      *m.AccountId,
+		AccountId:      m.AccountId,
 		FlowInstanceId: instId.String(),
 	}); er != nil {
-		return er
+		return "", er
+
 	}
-	return nil
+	return instId.String(), er
+
 }
 
 func (s *Service) Get(id string) ([]rdbms.GetWorkflowI, error) {
-	return s.workflowRepo.Get(id)
+	return s.workflowRepo.GetDetails(id)
 }
 func (s *Service) GetAll(of string) ([]rdbms.WorkflowI, error) {
 	return s.workflowRepo.GetAll(of)
+}
+
+func (s *Service) AttachToWorkflow(
+	d rdbms.AttachWorkflowReqI,
+) (rdbms.AttachWorkflowI, error) {
+	var wfinstId string
+	var er error
+	if d.WorkflowID != nil {
+		wfinstId, er = s.CreateWorkflowInstance(rdbms.CreateWorkflowInstanceI{
+			Wid:       *d.WorkflowID,
+			AccountId: d.AccountId,
+		})
+		if er != nil {
+			return rdbms.AttachWorkflowI{}, er
+		}
+		if er := s.workflowRepo.CreateFlowInstanceAccount(rdbms.CreateFlowInstanceAccountI{
+			AccountId:      d.AccountId,
+			FlowInstanceId: wfinstId,
+		}); er != nil {
+			return rdbms.AttachWorkflowI{}, er
+		}
+	}
+	if d.InstanceId != nil {
+		wfinstId = *d.InstanceId
+	}
+	getFlowinstance := rdbms.GetFlowInstance{
+		InstanceId: wfinstId,
+		Type:       d.FlowInstanceType,
+	}
+	fmt.Println(wfinstId, "cmcmmcmc")
+	flInst, er := s.workflowRepo.GetFlowInstance(getFlowinstance)
+	if er != nil {
+		return rdbms.AttachWorkflowI{}, er
+	}
+	if flInst != nil {
+		return rdbms.AttachWorkflowI{
+			FlowInstanceId:       &flInst.Id,
+			FlowInstanceParamsId: nil,
+		}, nil
+	}
+	flInstParams, er := s.workflowRepo.GetFlowInstanceParams(getFlowinstance)
+	if er != nil {
+		return rdbms.AttachWorkflowI{}, er
+	}
+	if flInstParams == nil {
+		return rdbms.AttachWorkflowI{}, errors.New("No_Flow Instance Or Params Found For Purchase Order")
+	}
+	return rdbms.AttachWorkflowI{
+		FlowInstanceId:       nil,
+		FlowInstanceParamsId: &flInstParams.Id,
+	}, nil
+
 }

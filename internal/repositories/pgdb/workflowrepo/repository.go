@@ -6,6 +6,8 @@ import (
 	"fmt"
 
 	"github.com/doug-martin/goqu/v9"
+	"github.com/doug-martin/goqu/v9/exp"
+	"github.com/google/uuid"
 )
 
 type Repository struct {
@@ -22,22 +24,34 @@ func New(logger logging.Logger,
 }
 func (r *Repository) Insert(
 	m rdbms.WorkflowI,
-) (string, error) {
-	var id rdbms.Id
+) (uuid.UUID, error) {
+	var id uuid.UUID
 	if _, er := r.dbClient.Insert(TABLE_WORKFLOW).
-		Rows(m).Returning("id").Executor().ScanStruct(&id); er != nil {
-		return "", er
+		Rows(goqu.Record{
+			NAME:       m.Name,
+			TYPE:       m.Type,
+			ACCOUNT_ID: m.AccountId,
+		}).Returning(ID).Executor().ScanVal(&id); er != nil {
+		return uuid.Nil, er
 	}
-	return id.Id, nil
+	fmt.Println("mmmfmfm")
+	return id, nil
 }
 func (r *Repository) InsertFlow(
 	f rdbms.FlowI,
-) (string, error) {
-	var id rdbms.Id
-	if _, er := r.dbClient.Insert(TABLE_FLOW).Rows(f).Returning("id").Executor().ScanStruct(&id); er != nil {
-		return "", er
+) (uuid.UUID, error) {
+	var id uuid.UUID
+
+	if _, er := r.dbClient.Insert(TABLE_FLOW).Rows(goqu.Record{
+		WORKFLOW_ID: f.WorkflowID,
+		DESCRIPTION: f.Description,
+		TYPE:        f.Type,
+		ORDER:       f.Order,
+		TAT:         f.TAT,
+	}).Returning(ID).Executor().ScanVal(&id); er != nil {
+		return uuid.Nil, er
 	}
-	return id.Id, nil
+	return id, nil
 }
 func (r *Repository) InsertFlowParams(
 	f []rdbms.FlowParamI,
@@ -50,11 +64,12 @@ func (r *Repository) InsertFlowParams(
 func (r *Repository) InsertFlowInstance(
 	f rdbms.FlowInstanceI,
 ) (string, error) {
-	var id string
-	if _, er := r.dbClient.Insert(TABLE_FLOW_INSTANCE).Rows(f).Returning("id").Executor().ScanStruct(&id); er != nil {
+	var id uuid.UUID
+	if _, er := r.dbClient.Insert(TABLE_FLOW_INSTANCE).Rows(f).Returning(ID).Executor().ScanVal(&id); er != nil {
+		fmt.Println(er, "rmrmrm")
 		return "", er
 	}
-	return id, nil
+	return id.String(), nil
 }
 func (r *Repository) InsertFlowInstanceParam(
 	f []rdbms.FlowInstanceParamI,
@@ -66,6 +81,21 @@ func (r *Repository) InsertFlowInstanceParam(
 }
 
 func (r *Repository) Get(
+	id string,
+) (rdbms.WorkflowI, error) {
+	var wf rdbms.WorkflowI
+	if _, er := r.dbClient.From(TABLE_WORKFLOW).Select(
+		ID,
+		NAME,
+		TYPE,
+		ACCOUNT_ID,
+	).Where(goqu.C(ID).Eq(id)).ScanStruct(&wf); er != nil {
+		return rdbms.WorkflowI{}, er
+	}
+	return rdbms.WorkflowI{}, nil
+}
+
+func (r *Repository) GetDetails(
 	id string,
 ) ([]rdbms.GetWorkflowI, error) {
 	var wf []rdbms.GetWorkflowI
@@ -109,7 +139,7 @@ func (r *Repository) GetAll(
 }
 
 func (r *Repository) GetFlows(
-	wid string,
+	wid uuid.UUID,
 ) ([]rdbms.FlowI, error) {
 	var ar []rdbms.FlowI
 	if er := r.dbClient.From(TABLE_FLOW).Select(
@@ -121,7 +151,7 @@ func (r *Repository) GetFlows(
 		ORDER,
 		ACTIVE,
 		TAT,
-	).Where(goqu.C(WORKFLOW_ID).Eq(wid)).ScanStructs(&ar); er != nil {
+	).Where(goqu.C(WORKFLOW_ID).Eq(wid.String())).Executor().ScanStructs(&ar); er != nil {
 		return nil, er
 	}
 	return ar, nil
@@ -129,18 +159,102 @@ func (r *Repository) GetFlows(
 
 func (r *Repository) GetFlowParams(
 	fpid string,
-) ([]rdbms.FlowParamI, error) {
-	var ar []rdbms.FlowParamI
+) ([]rdbms.GetFlowParamsResponseI, error) {
+	var ar []rdbms.GetFlowParamsResponseI
 	if er := r.dbClient.From(TABLE_FLOW_PARAMS).Select(
 		ID,
-		FLOW_ID,
 		NAME,
+		FLOW_ID_PARAM,
 		TYPE,
 		CREATED_AT,
 		CREATED_AT,
 		UPDATED_AT,
-	).Where(goqu.C(WORKFLOW_ID).Eq(fpid)).ScanStructs(&ar); er != nil {
+	).Where(goqu.C(FLOW_ID_PARAM).Eq(fpid)).ScanStructs(&ar); er != nil {
+		fmt.Println("errr", er)
 		return nil, er
 	}
 	return ar, nil
+}
+
+func (r *Repository) CreateFlowInstanceAccount(
+	f rdbms.CreateFlowInstanceAccountI,
+) error {
+	if _, er := r.dbClient.Insert(TABLE_FLOW_INSTANCES_ACCOUNTS).Rows(f).Executor().Exec(); er != nil {
+		return er
+	}
+	return nil
+}
+
+func (r *Repository) GetWorkflowByType(
+	f rdbms.GetWorkflowByType,
+) (rdbms.WorkflowI, error) {
+	var wf rdbms.WorkflowI
+	q := exp.Ex{}
+	q[TYPE] = f.Type
+	if f.AccountId != nil {
+		q[ACCOUNT_ID] = *f.AccountId
+	}
+	if _, er := r.dbClient.From(TABLE_WORKFLOW).Select(
+		ID,
+		NAME,
+		TYPE,
+		ACCOUNT_ID,
+	).Where(q).Executor().ScanVal(&wf); er != nil {
+		return rdbms.WorkflowI{}, er
+	}
+	fmt.Println(wf, "dmdmdm")
+	return wf, nil
+}
+func (r *Repository) GetFlowInstance(
+	f rdbms.GetFlowInstance,
+) (*rdbms.GetFlowInstanceResponseI, error) {
+	var wf rdbms.GetFlowInstanceResponseI
+	if _, er := r.dbClient.From(TABLE_FLOW_INSTANCE).Select(
+		ID,
+		WORKFLOW_ID,
+		DESCRIPTION,
+		TYPE,
+		TITLE,
+		ORDER,
+		ACTIVE,
+		TAT,
+		INSTANCE_ID,
+		STATUS,
+		IS_COMPLETED,
+		ASSIGNED_TO,
+	).Where(
+		goqu.And(
+			goqu.C(INSTANCE_ID).Eq(f.InstanceId),
+			goqu.C(TYPE).Eq(f.Type),
+		),
+	).ScanStruct(&wf); er != nil {
+		return nil, er
+	}
+	return &wf, nil
+}
+
+func (r *Repository) GetFlowInstanceParams(
+	f rdbms.GetFlowInstance,
+) (*rdbms.GetFlowInstanceParamsResponseI, error) {
+	var wf rdbms.GetFlowInstanceParamsResponseI
+	if er := r.dbClient.From(TABLE_FLOW_INSTANCE).Select(
+		ID,
+		FLOW_INSTANCES_ID,
+		NAME,
+		TYPE,
+		INSTANCE_PARAM_MANDATORY,
+		INSTANCE_PARAM_APPROVED,
+		INSTANCE_PARAM_VALUE,
+	).Where(
+		goqu.And(
+			goqu.C(INSTANCE_ID).Eq(f.InstanceId),
+		),
+	).Join(goqu.T(TABLE_FLOW_INSTANCE_PARAMS), goqu.On(
+		goqu.I(fmt.Sprintf("%s.%s", TABLE_FLOW_INSTANCE, ID)).Eq(
+			goqu.I(fmt.Sprintf("%s.%s", TABLE_FLOW_INSTANCE_PARAMS, FLOW_INSTANCES_ID)),
+		),
+	)).ScanStructs(&wf); er != nil {
+		return nil, er
+	}
+	return &wf, nil
 }

@@ -14,7 +14,7 @@ type CreateUserI struct {
 	RoleId            int       `db:"role_id"`
 	Role              string    `json:"role"`
 	PrimaryLocationID uuid.UUID `db:"primary_location_id" json:"primary_location_id"`
-	CreatedBy         string
+	CreatedBy         string    `json:"created_by"db:"created_by"`
 }
 
 type UserI struct {

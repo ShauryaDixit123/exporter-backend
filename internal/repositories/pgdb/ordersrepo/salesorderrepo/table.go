@@ -1,6 +1,6 @@
 package salesorderrepo
 
-const TABLE = "sales_order"
+const TABLE = "sales_orders"
 
 const (
 	ID                      = "id"

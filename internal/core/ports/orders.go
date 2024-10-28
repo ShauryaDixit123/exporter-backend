@@ -7,7 +7,7 @@ import (
 type RdbmsPurchaseOrderRepoistory interface {
 	InsertOne(
 		data rdbms.PurchaseOrder,
-	) error
+	) (string, error)
 	SelectOne(id string) (rdbms.PurchaseOrder, error)
 	UpdateOne(
 		id string,
@@ -151,7 +151,7 @@ type OrdersService interface {
 	// 	isSO bool,
 	// ) ([]byte, error)
 	CreatePurchaseOrder(
-		d rdbms.PurchaseOrder,
+		d rdbms.CreatePurchaseOrder,
 	) error
 
 	// AddSOTrackingDetails(isContainerTracking bool, soId, containerNoOrMBLNo, liner string) error
