@@ -235,8 +235,18 @@ func (r *Repository) GetFlowInstance(
 
 func (r *Repository) GetFlowInstanceParams(
 	f rdbms.GetFlowInstance,
-) (*rdbms.GetFlowInstanceParamsResponseI, error) {
-	var wf rdbms.GetFlowInstanceParamsResponseI
+) ([]rdbms.GetFlowInstanceParamsResponseI, error) {
+	var wf []rdbms.GetFlowInstanceParamsResponseI
+	ex := exp.Ex{}
+	if f.Type != nil {
+		ex[TYPE] = *f.Type
+	}
+	if f.InstanceId != nil {
+		ex[INSTANCE_ID] = *f.InstanceId
+	}
+	if f.FlowInstanceId != nil {
+		ex[FLOW_INSTANCES_ID] = *f.FlowInstanceId
+	}
 	if er := r.dbClient.From(TABLE_FLOW_INSTANCE).Select(
 		ID,
 		FLOW_INSTANCES_ID,
@@ -246,9 +256,7 @@ func (r *Repository) GetFlowInstanceParams(
 		INSTANCE_PARAM_APPROVED,
 		INSTANCE_PARAM_VALUE,
 	).Where(
-		goqu.And(
-			goqu.C(INSTANCE_ID).Eq(f.InstanceId),
-		),
+		ex,
 	).Join(goqu.T(TABLE_FLOW_INSTANCE_PARAMS), goqu.On(
 		goqu.I(fmt.Sprintf("%s.%s", TABLE_FLOW_INSTANCE, ID)).Eq(
 			goqu.I(fmt.Sprintf("%s.%s", TABLE_FLOW_INSTANCE_PARAMS, FLOW_INSTANCES_ID)),
@@ -256,5 +264,77 @@ func (r *Repository) GetFlowInstanceParams(
 	)).ScanStructs(&wf); er != nil {
 		return nil, er
 	}
-	return &wf, nil
+	return wf, nil
+}
+func (r *Repository) GetInstanceAccount(
+	f rdbms.GetInstanceAccount,
+) ([]rdbms.CreateFlowInstanceAccountI, error) {
+	var wf []rdbms.CreateFlowInstanceAccountI
+	if er := r.dbClient.From(TABLE_FLOW_INSTANCES_ACCOUNTS).Select(
+		FLOW_INSTANCES_ID,
+		ACCOUNT_ID,
+		INSTANCE_ID,
+		TITLE,
+		DESCRIPTION,
+		TYPE,
+		ORDER,
+		goqu.I(fmt.Sprintf("%s.%s", TABLE_FLOW_INSTANCE, ID)).As("flow_instance_id"),
+		ORDER,
+		TAT,
+		STATUS,
+		IS_COMPLETED,
+		ASSIGNED_TO,
+		WORKFLOW_ID,
+	).Where(
+		goqu.And(
+			goqu.C(ACCOUNT_ID).Eq(f.AccountId),
+		),
+	).Join(goqu.T(TABLE_FLOW_INSTANCE), goqu.On(
+		goqu.I(fmt.Sprintf("%s.%s", TABLE_FLOW_INSTANCES_ACCOUNTS, INSTANCE_ID)).Eq(
+			goqu.I(fmt.Sprintf("%s.%s", TABLE_FLOW_INSTANCE, INSTANCE_ID)),
+		),
+	)).ScanStructs(&wf); er != nil {
+		return nil, er
+	}
+	return wf, nil
+}
+
+func (r *Repository) UpdateFlowInstanceParam(
+	f rdbms.UpdateFlowInstanceParamsI,
+) error {
+	if _, er := r.dbClient.Update(TABLE_FLOW_INSTANCE_PARAMS).Set(
+		goqu.Record{
+			INSTANCE_PARAM_VALUE: f.Value,
+		},
+	).Where(
+		goqu.I(fmt.Sprintf("%s.%s", TABLE_FLOW_INSTANCE_PARAMS, ID)).Eq(f.Id),
+	).Executor().Exec(); er != nil {
+		return er
+	}
+
+	return nil
+}
+
+func (r *Repository) UpdateFlowInstance(
+	f rdbms.UpdateFlowInstanceI,
+) error {
+	rec := goqu.Record{}
+	if f.Status != nil {
+		rec[STATUS] = *f.Status
+	}
+	if f.AssignedTo != nil {
+		rec[ASSIGNED_TO] = *f.AssignedTo
+	}
+	if f.Active != nil {
+		rec[ACTIVE] = *f.Active
+	}
+	if f.ExpiresAt != nil {
+		rec[EXPIRES_AT] = *f.ExpiresAt
+	}
+	if _, er := r.dbClient.Update(TABLE_FLOW_INSTANCE).Set(rec).Where(
+		goqu.I(fmt.Sprintf("%s.%s", TABLE_FLOW_INSTANCE, ID)).Eq(f.Id),
+	).Executor().Exec(); er != nil {
+		return er
+	}
+	return nil
 }

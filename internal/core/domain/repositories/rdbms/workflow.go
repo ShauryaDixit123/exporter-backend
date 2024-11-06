@@ -69,8 +69,14 @@ type GetWorkflowByType struct {
 	AccountId *int   `db:"account_id" json:"account_id"`
 }
 type GetFlowInstance struct {
-	Type       string `db:"type" json:"type"`
-	InstanceId string `db:"instance_id" json:"instance_id"`
+	Type           *string `db:"type" json:"type"`
+	InstanceId     *string `db:"instance_id" json:"instance_id"`
+	FlowInstanceId *string `db:"flow_instance_id" json:"flow_instance_id"`
+}
+
+type GetInstanceAccount struct {
+	AccountId int `db:"account_id" json:"account_id"`
+	// InstanceId *string `db:"instance_id" json:"instance_id"`
 }
 
 type FlowParamI struct {
@@ -109,14 +115,22 @@ type FlowInstanceI struct {
 	UpdatedBy    string    `db:"updated_by" json:"updated_by"`
 	CreatedBy    string    `db:"created_by" json:"created_by"`
 }
+
+type UpdateFlowInstanceI struct {
+	Id         string     `json:"id" db:"id"`
+	Status     *string    `json:"status" db:"status"`
+	AssignedTo *string    `json:"assigned_to" db:"assigned_to"`
+	Active     *bool      `json:"active" db:"active"`
+	ExpiresAt  *time.Time `json:"expires_at" db:"expires_at"`
+}
 type GetFlowInstanceResponseI struct {
 	Id string `json:"id" db:"id"`
 	FlowInstanceI
 }
 
 type GetFlowInstanceParamsResponseI struct {
-	Id string `json:"id" db:"id"`
 	FlowInstanceParamI
+	Id string `json:"id" db:"id"`
 }
 type FlowInstanceParamI struct {
 	// ID             string    `db:"id" json:"id"`
@@ -129,4 +143,8 @@ type FlowInstanceParamI struct {
 	CreatedAt      time.Time `db:"created_at" json:"created_at"`
 	UpdatedBy      string    `db:"updated_by" json:"updated_by"`
 	CreatedBy      string    `db:"created_by" json:"created_by"`
+}
+type UpdateFlowInstanceParamsI struct {
+	Id    string `json:"id" db:"id"`
+	Value string `json:"value" db:"value"`
 }

@@ -6,7 +6,6 @@ CREATE TABLE IF NOT EXISTS flow_instance_params (
     "name" VARCHAR,
     "type" VARCHAR,
     mandatory BOOLEAN,
-    approved BOOLEAN,
     "value" VARCHAR,
     updated_at TIMESTAMP WITHOUT TIME ZONE,
     created_at TIMESTAMP WITHOUT TIME ZONE,

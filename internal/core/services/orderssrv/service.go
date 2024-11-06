@@ -13,9 +13,8 @@ type Service struct {
 	purchaseOrderRepo ports.RdbmsPurchaseOrderRepoistory
 	lineitemsRepo     ports.RdbmsPurchaseOrderLineItemsRepoistory
 	salesOrderRepo    ports.RdbmsSalesOrderRepoistory
-	// workflowRepo      ports.RdbmsWorkflowRepository
-	accountsRepo    ports.RdbmsAccountsRepository
-	workflowService ports.WorkflowService
+	accountsRepo      ports.RdbmsAccountsRepository
+	workflowService   ports.WorkflowService
 }
 
 func New(

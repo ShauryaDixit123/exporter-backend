@@ -48,7 +48,16 @@ type RdbmsWorkflowRepository interface {
 	) (*rdbms.GetFlowInstanceResponseI, error)
 	GetFlowInstanceParams(
 		f rdbms.GetFlowInstance,
-	) (*rdbms.GetFlowInstanceParamsResponseI, error)
+	) ([]rdbms.GetFlowInstanceParamsResponseI, error)
+	GetInstanceAccount(
+		f rdbms.GetInstanceAccount,
+	) ([]rdbms.CreateFlowInstanceAccountI, error)
+	UpdateFlowInstanceParam(
+		f rdbms.UpdateFlowInstanceParamsI,
+	) error
+	UpdateFlowInstance(
+		f rdbms.UpdateFlowInstanceI,
+	) error
 }
 
 type WorkflowService interface {
@@ -61,4 +70,13 @@ type WorkflowService interface {
 	AttachToWorkflow(
 		d rdbms.AttachWorkflowReqI,
 	) (rdbms.AttachWorkflowI, error)
+	GetInstanceAccount(
+		f rdbms.GetInstanceAccount,
+	) ([]rdbms.CreateFlowInstanceAccountI, error)
+	UpdateFlowInstanceParam(
+		f rdbms.UpdateFlowInstanceParamsI,
+	) error
+	UpdateFlowInstance(
+		f rdbms.UpdateFlowInstanceI,
+	) error
 }

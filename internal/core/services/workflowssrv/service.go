@@ -2,10 +2,10 @@ package workflowssrv
 
 import (
 	"errors"
+	"exporterbackend/internal/common/constants"
 	"exporterbackend/internal/core/domain/repositories/rdbms"
 	"exporterbackend/internal/core/ports"
 	"exporterbackend/pkg/logging"
-	"fmt"
 
 	"github.com/google/uuid"
 )
@@ -152,10 +152,9 @@ func (s *Service) AttachToWorkflow(
 		wfinstId = *d.InstanceId
 	}
 	getFlowinstance := rdbms.GetFlowInstance{
-		InstanceId: wfinstId,
-		Type:       d.FlowInstanceType,
+		InstanceId: &wfinstId,
+		Type:       &d.FlowInstanceType,
 	}
-	fmt.Println(wfinstId, "cmcmmcmc")
 	flInst, er := s.workflowRepo.GetFlowInstance(getFlowinstance)
 	if er != nil {
 		return rdbms.AttachWorkflowI{}, er
@@ -175,7 +174,38 @@ func (s *Service) AttachToWorkflow(
 	}
 	return rdbms.AttachWorkflowI{
 		FlowInstanceId:       nil,
-		FlowInstanceParamsId: &flInstParams.Id,
+		FlowInstanceParamsId: &flInstParams[0].Id,
 	}, nil
 
+}
+
+func (s *Service) GetInstanceAccount(
+	f rdbms.GetInstanceAccount,
+) ([]rdbms.CreateFlowInstanceAccountI, error) {
+	return s.workflowRepo.GetInstanceAccount(f)
+}
+
+func (s *Service) UpdateFlowInstanceParam(
+	f rdbms.UpdateFlowInstanceParamsI,
+) error {
+	return s.workflowRepo.UpdateFlowInstanceParam(f)
+}
+
+func (s *Service) UpdateFlowInstance(
+	f rdbms.UpdateFlowInstanceI,
+) error {
+	if f.Status != nil && *f.Status == constants.STATUS_COMPLETED {
+		flowParams, er := s.workflowRepo.GetFlowInstanceParams(rdbms.GetFlowInstance{
+			FlowInstanceId: &f.Id,
+		})
+		if er != nil {
+			return er
+		}
+		for _, val := range flowParams {
+			if val.Mandatory && val.Value == nil {
+				return errors.New("Mandatory_Fields Are Missing")
+			}
+		}
+	}
+	return s.workflowRepo.UpdateFlowInstance(f)
 }

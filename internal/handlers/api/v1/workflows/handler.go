@@ -24,4 +24,6 @@ type RoutesHandler interface {
 	CreateInstance(
 		ctx *gin.Context,
 	)
+	UpdateFlowInstance(ctx *gin.Context)
+	UpdateFlowInstanceParams(ctx *gin.Context)
 }
