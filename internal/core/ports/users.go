@@ -13,6 +13,6 @@ type RdbmsUsersRepository interface {
 
 type UsersService interface {
 	Create(
-		u rdbms.CreateUserI,
+		u rdbms.CreateUserRequestI,
 	) (string, error)
 }

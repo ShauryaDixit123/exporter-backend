@@ -17,6 +17,11 @@ type CreateUserI struct {
 	CreatedBy         string    `json:"created_by"db:"created_by"`
 }
 
+type CreateUserRequestI struct {
+	IsInvited bool `json:"is_invited"`
+	CreateUserI
+}
+
 type UserI struct {
 	Id                uuid.UUID `db:"id" json:"id"`
 	Name              string    `db:"name" json:"name"`

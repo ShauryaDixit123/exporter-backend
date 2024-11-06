@@ -7,7 +7,7 @@ import (
 )
 
 func (h *Handler) Create(ctx *gin.Context) {
-	var user rdbms.CreateUserI
+	var user rdbms.CreateUserRequestI
 	if er := ctx.ShouldBindJSON(&user); er != nil {
 		ctx.JSON(402, er)
 	}
