@@ -338,3 +338,40 @@ func (r *Repository) UpdateFlowInstance(
 	}
 	return nil
 }
+
+// func (r *Repository) GetInstances(
+// 	f rdbms.GetInstancesI,
+// ) ([]rdbms.FlowInstanceI, error) {
+// 	var wf []rdbms.FlowInstanceI
+// 	if _, er := r.dbClient.From(TABLE_FLOW_INSTANCE).Select(
+// 		ID,
+// 		DESCRIPTION,
+// 		TYPE,
+// 		TITLE,
+// 		ORDER,
+// 		ACTIVE,
+// 		TAT,
+// 		INSTANCE_ID,
+// 		STATUS,
+// 		IS_COMPLETED,
+// 		ASSIGNED_TO,
+// 		WORKFLOW_ID,
+// 		goqu.I(fmt.Sprintf("%s.%s", TABLE_FLOW_INSTANCE_PARAMS, ID)).As("flow_instance_params_id"),
+// 		goqu.I(fmt.Sprintf("%s.%s", TABLE_FLOW_INSTANCE_PARAMS, INSTANCE_PARAM_VALUE)).As("flow_instance_params_value"),
+// 		goqu.I(fmt.Sprintf("%s.%s", TABLE_FLOW_INSTANCE_PARAMS, INSTANCE_PARAM_MANDATORY)).As("flow_instance_params_mandatory"),
+// 	).Join(
+// 		goqu.I(TABLE_FLOW_INSTANCE_PARAMS), goqu.On(
+// 			goqu.I(fmt.Sprintf("%s.%s", TABLE_FLOW_INSTANCE_PARAMS, FLOW_INSTANCE_ID_PARAM)).Eq(
+// 				goqu.I(fmt.Sprintf("%s.%s", TABLE_FLOW_INSTANCE, ID)),
+// 			),
+// 		),
+// 	).Join(goqu.I(TABLE_FLOW_INSTANCES_ACCOUNTS), goqu.On(
+// 		goqu.I(fmt.Sprintf("%s.%s",TABLE_FLOW_INSTANCES_ACCOUNTS, ACCOUNT_ID)).Eq(
+// 			f.AccountId,
+// 		),
+// 	)).Where(
+// 		goqu.Ex{
+// 			fmt.Sprintf("%s.%s",TABLE),
+// 		},
+// 	)
+// }

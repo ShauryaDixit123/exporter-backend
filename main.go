@@ -19,9 +19,9 @@ import (
 var embedMigrations embed.FS
 
 const (
-	API        configs.AppName = "wiz-backend-http-api"
-	RPC        configs.AppName = "wiz-backend-rpc-server"
-	MIGRATIONS configs.AppName = "wiz-backend-migrations"
+	API        configs.AppName = "exporterbackend-http-api"
+	RPC        configs.AppName = "exporterbackend-rpc-server"
+	MIGRATIONS configs.AppName = "exporterbackend-migrations"
 )
 
 func main() {

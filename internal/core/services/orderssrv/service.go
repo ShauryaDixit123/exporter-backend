@@ -43,7 +43,7 @@ func (s *Service) CreatePurchaseOrder(
 		if er != nil {
 			return er
 		}
-		d.WorkflowId = &acc.DefaultWorkflow
+		d.WorkflowId = &acc.DefaultWorkflowPreOrder
 	}
 	wfInstance, er := s.workflowService.AttachToWorkflow(
 		rdbms.AttachWorkflowReqI{

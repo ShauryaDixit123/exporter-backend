@@ -51,7 +51,8 @@ func (r *Repository) GetById(id int) (rdbms.AccountI, error) {
 		ID,
 		PRIMARY_USER_ID,
 		IS_ACTIVE,
-		DEFAULT_WORKFLOW,
+		DEFAULT_WORKFLOW_PRE_ORDER,
+		DEFAULT_WORKFLOW_POST_ORDER,
 		CREATED_AT,
 		MODIFIED_AT,
 	).Where(goqu.Ex{

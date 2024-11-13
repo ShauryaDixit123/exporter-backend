@@ -7,12 +7,13 @@ import (
 )
 
 type AccountI struct {
-	Id              int       `db:"id" json:"id"`
-	PrimaryUserID   uuid.UUID `db:"primary_user_id" json:"primary_user_id"`
-	IsActive        bool      `db:"is_active" json:"is_active"`
-	DefaultWorkflow string    `db:"default_workflow" json:"default_workflow"`
-	CreatedAt       time.Time `db:"created_at" json:"created_at"`
-	ModifiedAt      time.Time `db:"modified_at" json:"modified_at"`
+	Id                       int       `db:"id" json:"id"`
+	PrimaryUserID            uuid.UUID `db:"primary_user_id" json:"primary_user_id"`
+	IsActive                 bool      `db:"is_active" json:"is_active"`
+	DefaultWorkflowPreOrder  string    `db:"default_workflow_pre_order" json:"default_workflow_pre_order"`
+	DefaultWorkflowPostOrder string    `db:"default_workflow_post_order" json:"default_workflow_post_order"`
+	CreatedAt                time.Time `db:"created_at" json:"created_at"`
+	ModifiedAt               time.Time `db:"modified_at" json:"modified_at"`
 }
 type AccountsUsersMap struct {
 	ID         int       `db:"id" json:"id"`

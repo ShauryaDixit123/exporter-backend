@@ -148,3 +148,9 @@ type UpdateFlowInstanceParamsI struct {
 	Id    string `json:"id" db:"id"`
 	Value string `json:"value" db:"value"`
 }
+
+type GetInstancesI struct {
+	AccountId int    `db:"account_id" json:"account_id"`
+	Title     string `db:"title" json:"title"`
+	Order     int    `db:"order" json:"order"`
+}
