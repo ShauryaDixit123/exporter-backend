@@ -58,6 +58,12 @@ type RdbmsWorkflowRepository interface {
 	UpdateFlowInstance(
 		f rdbms.UpdateFlowInstanceI,
 	) error
+	GetInstances(
+		f rdbms.GetInstancesI,
+	) ([]rdbms.FlowInstanceDetails, error)
+	GetFlowsForAccount(
+		f rdbms.GetFlowsForAccountI,
+	) ([]rdbms.FlowI, error)
 }
 
 type WorkflowService interface {
@@ -79,4 +85,10 @@ type WorkflowService interface {
 	UpdateFlowInstance(
 		f rdbms.UpdateFlowInstanceI,
 	) error
+	GetInstances(
+		f rdbms.GetInstancesI,
+	) ([]rdbms.FlowInstanceDetails, error)
+	GetFlowForAccount(
+		f rdbms.GetFlowsForAccountI,
+	) ([]rdbms.FlowI, error)
 }

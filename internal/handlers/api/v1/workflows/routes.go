@@ -25,5 +25,7 @@ func (ro *Routes) Initialize(prefix string, r gin.IRouter) {
 		g.POST("/instance", ro.handler.CreateInstance)
 		g.PUT("/flow-instance", ro.handler.UpdateFlowInstance)
 		g.PUT("/flow-instance-params", ro.handler.UpdateFlowInstanceParams)
+		g.POST("/instances", ro.handler.GetInstances)
+		g.POST("/flows/accounts", ro.handler.GetFlowForAccount)
 	}
 }

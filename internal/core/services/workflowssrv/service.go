@@ -209,3 +209,14 @@ func (s *Service) UpdateFlowInstance(
 	}
 	return s.workflowRepo.UpdateFlowInstance(f)
 }
+
+func (s *Service) GetInstances(
+	f rdbms.GetInstancesI,
+) ([]rdbms.FlowInstanceDetails, error) {
+	return s.workflowRepo.GetInstances(f)
+}
+func (s *Service) GetFlowForAccount(
+	f rdbms.GetFlowsForAccountI,
+) ([]rdbms.FlowI, error) {
+	return s.workflowRepo.GetFlowsForAccount(f)
+}

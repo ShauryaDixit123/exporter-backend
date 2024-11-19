@@ -339,39 +339,88 @@ func (r *Repository) UpdateFlowInstance(
 	return nil
 }
 
-// func (r *Repository) GetInstances(
-// 	f rdbms.GetInstancesI,
-// ) ([]rdbms.FlowInstanceI, error) {
-// 	var wf []rdbms.FlowInstanceI
-// 	if _, er := r.dbClient.From(TABLE_FLOW_INSTANCE).Select(
-// 		ID,
-// 		DESCRIPTION,
-// 		TYPE,
-// 		TITLE,
-// 		ORDER,
-// 		ACTIVE,
-// 		TAT,
-// 		INSTANCE_ID,
-// 		STATUS,
-// 		IS_COMPLETED,
-// 		ASSIGNED_TO,
-// 		WORKFLOW_ID,
-// 		goqu.I(fmt.Sprintf("%s.%s", TABLE_FLOW_INSTANCE_PARAMS, ID)).As("flow_instance_params_id"),
-// 		goqu.I(fmt.Sprintf("%s.%s", TABLE_FLOW_INSTANCE_PARAMS, INSTANCE_PARAM_VALUE)).As("flow_instance_params_value"),
-// 		goqu.I(fmt.Sprintf("%s.%s", TABLE_FLOW_INSTANCE_PARAMS, INSTANCE_PARAM_MANDATORY)).As("flow_instance_params_mandatory"),
-// 	).Join(
-// 		goqu.I(TABLE_FLOW_INSTANCE_PARAMS), goqu.On(
-// 			goqu.I(fmt.Sprintf("%s.%s", TABLE_FLOW_INSTANCE_PARAMS, FLOW_INSTANCE_ID_PARAM)).Eq(
-// 				goqu.I(fmt.Sprintf("%s.%s", TABLE_FLOW_INSTANCE, ID)),
-// 			),
-// 		),
-// 	).Join(goqu.I(TABLE_FLOW_INSTANCES_ACCOUNTS), goqu.On(
-// 		goqu.I(fmt.Sprintf("%s.%s",TABLE_FLOW_INSTANCES_ACCOUNTS, ACCOUNT_ID)).Eq(
-// 			f.AccountId,
-// 		),
-// 	)).Where(
-// 		goqu.Ex{
-// 			fmt.Sprintf("%s.%s",TABLE),
-// 		},
-// 	)
-// }
+func (r *Repository) GetInstances(
+	f rdbms.GetInstancesI,
+) ([]rdbms.FlowInstanceDetails, error) {
+	var wf []rdbms.FlowInstanceDetails
+	q := r.dbClient.From(TABLE_FLOW_INSTANCE).Select(
+		goqu.I(fmt.Sprintf("%s.%s", TABLE_FLOW_INSTANCE, ID)).As("flow_instance_id"),
+		DESCRIPTION,
+		goqu.I(fmt.Sprintf("%s.%s", TABLE_FLOW_INSTANCE, TYPE)).As("flow_instance_type"),
+		goqu.I(fmt.Sprintf("%s.%s", TABLE_FLOW_INSTANCE_PARAMS, TYPE)).As("flow_instance_params_type"),
+		TITLE,
+		ORDER,
+		ACTIVE,
+		TAT,
+		goqu.I(fmt.Sprintf("%s.%s", TABLE_FLOW_INSTANCE, INSTANCE_ID)).As("flow_instance_id"),
+		STATUS,
+		IS_COMPLETED,
+		ASSIGNED_TO,
+		WORKFLOW_ID,
+		goqu.I(fmt.Sprintf("%s.%s", TABLE_FLOW_INSTANCE_PARAMS, ID)).As("flow_instance_params_id"),
+		goqu.I(fmt.Sprintf("%s.%s", TABLE_FLOW_INSTANCE_PARAMS, INSTANCE_PARAM_VALUE)).As("flow_instance_params_value"),
+		goqu.I(fmt.Sprintf("%s.%s", TABLE_FLOW_INSTANCE_PARAMS, INSTANCE_PARAM_MANDATORY)).As("flow_instance_params_mandatory"),
+	).Join(
+		goqu.I(TABLE_FLOW_INSTANCE_PARAMS), goqu.On(
+			goqu.I(fmt.Sprintf("%s.%s", TABLE_FLOW_INSTANCE_PARAMS, FLOW_INSTANCE_ID_PARAM)).Eq(
+				goqu.I(fmt.Sprintf("%s.%s", TABLE_FLOW_INSTANCE, ID)),
+			),
+		),
+	).Join(goqu.I(TABLE_FLOW_INSTANCES_ACCOUNTS), goqu.On(
+		goqu.I(fmt.Sprintf("%s.%s", TABLE_FLOW_INSTANCES_ACCOUNTS, INSTANCE_ID)).Eq(
+			goqu.I(fmt.Sprintf("%s.%s", TABLE_FLOW_INSTANCE, INSTANCE_ID)),
+		),
+	)).Where(
+		goqu.Ex{
+			fmt.Sprintf("%s.%s", TABLE_FLOW_INSTANCES_ACCOUNTS, ACCOUNT_ID): f.AccountId,
+			fmt.Sprintf("%s.%s", TABLE_FLOW_INSTANCE, TITLE):                f.Title,
+			fmt.Sprintf("%s.%s", TABLE_FLOW_INSTANCE, ORDER):                f.Order,
+		},
+	)
+	qu, _, _ := q.ToSQL()
+	fmt.Println(qu, "q")
+	if er := q.Executor().ScanStructs(&wf); er != nil {
+		return nil, er
+	}
+	return wf, nil
+}
+func (r *Repository) GetFlowsForAccount(
+	f rdbms.GetFlowsForAccountI,
+) ([]rdbms.FlowI, error) {
+	var wf []rdbms.FlowI
+	var qs string
+	if f.PreOrder {
+		qs = fmt.Sprintf("%s.%s", "accounts", "default_workflow_pre_order")
+	} else {
+		qs = fmt.Sprintf("%s.%s", "accounts", "default_workflow_post_order")
+	}
+	q := r.dbClient.From(TABLE_WORKFLOW).Select(
+		goqu.I(fmt.Sprintf("%s.%s", TABLE_FLOW, ID)).As("flow_id"),
+		WORKFLOW_ID,
+		DESCRIPTION,
+		goqu.I(fmt.Sprintf("%s.%s", TABLE_FLOW, TYPE)).As("flow_type"),
+		TITLE,
+		ORDER,
+		ACTIVE,
+		TAT,
+	).Join(
+		goqu.I(TABLE_FLOW), goqu.On(
+			goqu.I(fmt.Sprintf("%s.%s", TABLE_FLOW, WORKFLOW_ID)).Eq(
+				goqu.I(fmt.Sprintf("%s.%s", TABLE_WORKFLOW, ID)),
+			),
+		),
+	).Join(
+		goqu.I("accounts"),
+		goqu.On(
+			goqu.I(qs).Eq(
+				goqu.I(fmt.Sprintf("%s.%s", TABLE_WORKFLOW, ID)),
+			)),
+	).Where(goqu.C(ACCOUNT_ID).Eq(f.AccountId))
+	rqq, _, _ := q.ToSQL()
+	fmt.Println(rqq, "qq")
+	if er := q.
+		Executor().ScanStructs(&wf); er != nil {
+		return nil, er
+	}
+	return wf, nil
+}

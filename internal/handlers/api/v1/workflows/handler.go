@@ -26,4 +26,8 @@ type RoutesHandler interface {
 	)
 	UpdateFlowInstance(ctx *gin.Context)
 	UpdateFlowInstanceParams(ctx *gin.Context)
+	GetInstances(ctx *gin.Context)
+	GetFlowForAccount(
+		ctx *gin.Context,
+	)
 }
