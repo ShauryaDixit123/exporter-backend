@@ -54,6 +54,16 @@ type FlowI struct {
 	UpdatedBy   string    `db:"updated_by" json:"updated_by"`
 	CreatedBy   string    `db:"created_by" json:"created_by"`
 }
+type FlowAccountsResponseI struct {
+	FlowID      string `json:"flow_id" db:"flow_id"`
+	WorkflowID  string `json:"workflow_id" db:"workflow_id"`
+	Description string `json:"description" db:"description"`
+	FlowType    string `json:"flow_type" db:"flow_type"`
+	Title       string `json:"title" db:"title"`
+	Order       int    `json:"order" db:"order"`
+	Active      bool   `json:"active" db:"active"`
+	TAT         int    `json:"tat" db:"tat"`
+}
 
 type CreateFlowI struct {
 	FlowParams []FlowParamI `json:"flow_params"`
@@ -168,6 +178,7 @@ type FlowInstanceDetails struct {
 	AssignedTo                  string    `db:"assigned_to" json:"assigned_to"`
 	WorkflowID                  string    `db:"workflow_id" json:"workflow_id"`
 	FlowInstanceParamsID        string    `db:"flow_instance_params_id" json:"flow_instance_params_id"`
+	FlowInstanceParamsName      string    `db:"flow_instance_params_name" json:"flow_instance_params_name"`
 	FlowInstanceParamsValue     *string   `db:"flow_instance_params_value" json:"flow_instance_params_value"`
 	FlowInstanceParamsMandatory bool      `db:"flow_instance_params_mandatory" json:"flow_instance_params_mandatory"`
 	CreatedAt                   time.Time `db:"created_at" json:"created_at"` // Example additional fields if needed
@@ -176,4 +187,11 @@ type FlowInstanceDetails struct {
 type GetFlowsForAccountI struct {
 	AccountId int  `db:"account_id" json:"account_id"`
 	PreOrder  bool `db:"pre_order" json:"pre_order"`
+}
+
+type GroupedFlowInstancesResponse struct {
+	ID                 string                           `json:"flow_instance_id"`
+	Description        string                           `json:"description"`
+	Type               string                           `json:"flow_instance_type"`
+	FlowInstanceParams []GetFlowInstanceParamsResponseI `json:"flow_instance_params"`
 }

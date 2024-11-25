@@ -212,11 +212,50 @@ func (s *Service) UpdateFlowInstance(
 
 func (s *Service) GetInstances(
 	f rdbms.GetInstancesI,
-) ([]rdbms.FlowInstanceDetails, error) {
-	return s.workflowRepo.GetInstances(f)
+) ([]rdbms.GroupedFlowInstancesResponse, error) {
+	if res, er := s.workflowRepo.GetInstances(f); er != nil {
+		return nil, er
+	} else {
+		return s.groupByFlowInstanceID(res), nil
+	}
 }
 func (s *Service) GetFlowForAccount(
 	f rdbms.GetFlowsForAccountI,
-) ([]rdbms.FlowI, error) {
+) ([]rdbms.FlowAccountsResponseI, error) {
 	return s.workflowRepo.GetFlowsForAccount(f)
+}
+
+func (s *Service) groupByFlowInstanceID(responses []rdbms.FlowInstanceDetails) []rdbms.GroupedFlowInstancesResponse {
+	groupMap := make(map[string]*rdbms.GroupedFlowInstancesResponse)
+
+	for _, res := range responses {
+		if _, exists := groupMap[res.FlowInstanceID]; !exists {
+			groupMap[res.FlowInstanceID] = &rdbms.GroupedFlowInstancesResponse{
+				ID:                 res.FlowInstanceID,
+				Description:        res.Description,
+				Type:               res.FlowInstanceType,
+				FlowInstanceParams: []rdbms.GetFlowInstanceParamsResponseI{},
+			}
+		}
+
+		groupMap[res.FlowInstanceID].FlowInstanceParams = append(
+			groupMap[res.FlowInstanceID].FlowInstanceParams,
+			rdbms.GetFlowInstanceParamsResponseI{
+				Id: res.FlowInstanceParamsID,
+				FlowInstanceParamI: rdbms.FlowInstanceParamI{
+					Name:      res.FlowInstanceParamsName,
+					Value:     res.FlowInstanceParamsValue,
+					Mandatory: res.FlowInstanceParamsMandatory,
+					Type:      res.FlowInstanceParamsType,
+				},
+			},
+		)
+	}
+
+	groupedResponses := make([]rdbms.GroupedFlowInstancesResponse, 0, len(groupMap))
+	for _, group := range groupMap {
+		groupedResponses = append(groupedResponses, *group)
+	}
+
+	return groupedResponses
 }

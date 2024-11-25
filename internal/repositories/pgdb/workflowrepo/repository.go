@@ -358,6 +358,7 @@ func (r *Repository) GetInstances(
 		ASSIGNED_TO,
 		WORKFLOW_ID,
 		goqu.I(fmt.Sprintf("%s.%s", TABLE_FLOW_INSTANCE_PARAMS, ID)).As("flow_instance_params_id"),
+		goqu.I(fmt.Sprintf("%s.%s", TABLE_FLOW_INSTANCE_PARAMS, INSTANCE_PARAM_NAME)).As("flow_instance_params_name"),
 		goqu.I(fmt.Sprintf("%s.%s", TABLE_FLOW_INSTANCE_PARAMS, INSTANCE_PARAM_VALUE)).As("flow_instance_params_value"),
 		goqu.I(fmt.Sprintf("%s.%s", TABLE_FLOW_INSTANCE_PARAMS, INSTANCE_PARAM_MANDATORY)).As("flow_instance_params_mandatory"),
 	).Join(
@@ -386,8 +387,8 @@ func (r *Repository) GetInstances(
 }
 func (r *Repository) GetFlowsForAccount(
 	f rdbms.GetFlowsForAccountI,
-) ([]rdbms.FlowI, error) {
-	var wf []rdbms.FlowI
+) ([]rdbms.FlowAccountsResponseI, error) {
+	var wf []rdbms.FlowAccountsResponseI
 	var qs string
 	if f.PreOrder {
 		qs = fmt.Sprintf("%s.%s", "accounts", "default_workflow_pre_order")
@@ -415,7 +416,7 @@ func (r *Repository) GetFlowsForAccount(
 			goqu.I(qs).Eq(
 				goqu.I(fmt.Sprintf("%s.%s", TABLE_WORKFLOW, ID)),
 			)),
-	).Where(goqu.C(ACCOUNT_ID).Eq(f.AccountId))
+	).Where(goqu.I(fmt.Sprintf("%s.%s", "accounts", "id")).Eq(f.AccountId))
 	rqq, _, _ := q.ToSQL()
 	fmt.Println(rqq, "qq")
 	if er := q.
