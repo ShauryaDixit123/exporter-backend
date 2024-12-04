@@ -425,3 +425,24 @@ func (r *Repository) GetFlowsForAccount(
 	}
 	return wf, nil
 }
+
+// "CHARGEBEE_API_KEY": "test_2Dcdw5xNBnuXOIwZhjOHPqFNrOb6O3Rax",
+// "CHARGEBEE_SITE": "elixirdocs-test",
+// "EMAIL_OTP": "no-reply@elixirdocs.io",
+// "EMAIL_OTP_PASSWORD": "Raw58520",
+// "POSTMARK_SERVER_TOKEN": "8177389f-a4b8-4a82-9d53-6d0898e7fa98",
+// "POSTMARK_MESSAGE_STREAM": "unprod",
+// "AWS_ACCESS_KEY_ID": "3RpXCwotXmFGCsys",
+// "AWS_SECRET_ACCESS_KEY": "DOJpwMluFO3xOYjoFbpVGisQIxpliIUe",
+// "AWS_BUCKET_NAME": "local-sage-documents",
+// "S3_ENDPOINT": "http://127.0.0.1:9005",
+// "REDIS_DB": "0",
+// "REDIS_DSN": "localhost:55001",
+// "REDIS_PASSWORD": "redispw",
+// "ACCESS_SECRET": "HEY_BABY!",
+// "REFRESH_SECRET": "YEAH_BABY!",
+// "PDF_HOST": "localhost:5051",
+// "NANONETS_API_KEY": "N6sJkBEGDiMvyn5NPJ2QsKv1GL3bcJJi",
+// "PACKING_LIST_MODEL_ID_1": "9beed2bf-a374-42c4-9c57-78598b3d803a",
+// "SHIPPING_BILL_MODEL_ID_1": "a282bed9-3990-4711-9b95-2a4af7dde904",
+// "BASE_URL": "http://local.sage.com"
