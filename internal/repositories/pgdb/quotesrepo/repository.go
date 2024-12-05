@@ -22,8 +22,8 @@ func New(
 	}
 }
 
-func (r *Repository) InsertRequest(
-	f rdbms.CreateQuotesI,
+func (r *Repository) InsertRFQ(
+	f rdbms.CreateRFQI,
 ) (int, error) {
 	var Id int
 	if _, er := r.dbClient.Insert(TABLE_REQUEST_FOR_QUOTE).Rows(
@@ -50,8 +50,8 @@ func (r *Repository) InsertRequest(
 	return Id, nil
 }
 
-func (r *Repository) InsertRequestItems(
-	f []rdbms.CreateQuotesItemI,
+func (r *Repository) InsertRFQItems(
+	f []rdbms.CreateRFQItemI,
 ) error {
 	if _, er := r.dbClient.Insert(TABLE_REQUEST_FOR_QUOTE_ITEMS).Rows(f).Executor().Exec(); er != nil {
 		return er
@@ -60,8 +60,8 @@ func (r *Repository) InsertRequestItems(
 }
 
 // re work required in updates
-func (r *Repository) UpdateRequest(
-	f rdbms.QoutesI,
+func (r *Repository) UpdateRFQ(
+	f rdbms.RFQI,
 ) error {
 	if _, er := r.dbClient.Update(TABLE_REQUEST_FOR_QUOTE).Set(
 		goqu.Record{
@@ -90,3 +90,7 @@ func (r *Repository) UpdateRequestItem(
 	}
 	return nil
 }
+
+// func (r *Repository) InsertQuote(
+// 	f rdbms.CreateRFQI
+// )

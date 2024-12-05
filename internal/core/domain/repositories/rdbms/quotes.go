@@ -5,21 +5,14 @@ import (
 )
 
 type CreateQuotesI struct {
-	AccountID int    `json:"account_id" db:"account_id"`
-	BuyerID   string `json:"buyer_id" db:"buyer_id"`
-	// SupplierID         string    `json:"supplier_id" db:"supplier_id"`
-	Title              string    `json:"title" db:"title"`
-	Description        string    `json:"description" db:"description"`
-	IncoTerms          string    `json:"inco_terms" db:"inco_terms"`
-	PickupLocationID   int       `json:"pickup_location_id" db:"pickup_location_id"`
-	DropLocationID     int       `json:"drop_location_id" db:"drop_location_id"`
-	PaymentTerms       string    `json:"payment_terms" db:"payment_terms"`
+	RFQID              string    `json:"rfq_id" db:"rfq_id"`
+	SupplierID         string    `json:"supplier_id" db:"supplier_id"`
 	Active             bool      `json:"active" db:"active"`
-	TAT                int       `json:"tat" db:"tat"` // Turnaround time
 	DueDate            time.Time `json:"due_date" db:"due_date"`
-	Status             string    `json:"status" db:"status"`
+	Status             string    `json:"status" db:"status"` // Assuming 18 char max
 	TermsAndConditions string    `json:"terms_and_conditions" db:"terms_and_conditions"`
-	CreatedBy          string    `json:"created_by" db:"created_by"`
+	Remarks            string    `json:"remarks" db:"remarks"`
+	RejectionReason    string    `json:"rejection_reason" db:"rejection_reason"`
 	CreatedOn          time.Time `json:"created_on" db:"created_on"`
 	ModifiedAt         time.Time `json:"modified_at" db:"modified_at"`
 }
@@ -65,14 +58,21 @@ type RFQItemI struct {
 }
 
 type CreateRFQI struct {
-	RFQID              string    `json:"rfq_id" db:"rfq_id"`
-	SupplierID         string    `json:"supplier_id" db:"supplier_id"`
+	AccountID int    `json:"account_id" db:"account_id"`
+	BuyerID   string `json:"buyer_id" db:"buyer_id"`
+	// SupplierID         string    `json:"supplier_id" db:"supplier_id"`
+	Title              string    `json:"title" db:"title"`
+	Description        string    `json:"description" db:"description"`
+	IncoTerms          string    `json:"inco_terms" db:"inco_terms"`
+	PickupLocationID   int       `json:"pickup_location_id" db:"pickup_location_id"`
+	DropLocationID     int       `json:"drop_location_id" db:"drop_location_id"`
+	PaymentTerms       string    `json:"payment_terms" db:"payment_terms"`
 	Active             bool      `json:"active" db:"active"`
+	TAT                int       `json:"tat" db:"tat"` // Turnaround time
 	DueDate            time.Time `json:"due_date" db:"due_date"`
-	Status             string    `json:"status" db:"status"` // Assuming 18 char max
+	Status             string    `json:"status" db:"status"`
 	TermsAndConditions string    `json:"terms_and_conditions" db:"terms_and_conditions"`
-	Remarks            string    `json:"remarks" db:"remarks"`
-	RejectionReason    string    `json:"rejection_reason" db:"rejection_reason"`
+	CreatedBy          string    `json:"created_by" db:"created_by"`
 	CreatedOn          time.Time `json:"created_on" db:"created_on"`
 	ModifiedAt         time.Time `json:"modified_at" db:"modified_at"`
 }
