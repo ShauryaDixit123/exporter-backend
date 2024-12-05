@@ -1,0 +1,43 @@
+{
+  "buyer": {
+    "action": [
+      "workflows.create",
+      "purchase_orders.create",
+      "purchase_orders.update",
+      "purchase_orders.delete",
+      "purchase_orders.read",
+      "sales_orders.read",
+      "sales_orders.update.status",
+      "sales_orders.update.rejection_reason",
+      "rfq.create.status.request",
+      "rfq.update",
+      "rfq_items.create",
+      "quotes.read",
+      "quotes_items.read"
+    ]
+  },
+  "supplier": {
+    "action": [
+      "workflow.create",
+      "flow_instance.update",
+      "flow_instance_params.update",
+      "sales_orders.create",
+      "sales_orders.update",
+      "sales_orders.delete",
+      "sales_orders.read",
+      "purchase_orders.read",
+      "purchase_orders.update.status",
+      "purchase_orders.update.rejection_reason",
+      "quotes.create",
+      "quotes_items.create",
+      "quotes.read",
+      "quotes_items.read",
+      "quotes_items.upate.rate",
+      "quotes_items.upate.rate_unit",
+      "quotes_items.upate.quantity"
+    ]
+  },
+  "admin": {
+    "action": ["*"]
+  }
+}
