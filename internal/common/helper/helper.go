@@ -6,7 +6,8 @@ import (
 )
 
 type HelperFunctions interface {
-	CheckForPermissions(p common.PermsCheck) bool
+	CheckForPermissions(p common.PermissionCheck) bool
+	ParseURLAndAction(url, method string) string
 }
 
 type HelperRepository struct {

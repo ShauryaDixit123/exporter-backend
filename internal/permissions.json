@@ -2,6 +2,7 @@
   "buyer": {
     "action": [
       "workflows.create",
+      "instances.create",
       "purchase_orders.create",
       "purchase_orders.update",
       "purchase_orders.delete",
@@ -38,6 +39,6 @@
     ]
   },
   "admin": {
-    "action": ["*"]
+    "action": ["action_import.buyer", "action_import.supplier"]
   }
 }
