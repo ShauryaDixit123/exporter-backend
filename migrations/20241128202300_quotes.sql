@@ -18,6 +18,8 @@ CREATE TABLE IF NOT EXISTS quotes (
     "status" VARCHAR(18),
     terms_and_conditions VARCHAR,
     created_by UUID REFERENCES users (id),
+    remarks VARCHAR,
+    rejection_reason VARCHAR,
     created_on TIMESTAMPTZ NOT NULL DEFAULT (NOW() AT TIME ZONE 'UTC'),
     modified_at TIMESTAMPTZ NOT NULL DEFAULT (NOW() AT TIME ZONE 'UTC')
 );

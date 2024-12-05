@@ -7,12 +7,12 @@ type RdbmsQuotesRepository interface {
 		f rdbms.CreateQuotesI,
 	) (int, error)
 	InsertItems(
-		f rdbms.CreateQuotesItemI,
+		f []rdbms.CreateQuotesItemI,
 	) error
 	Update(
 		f rdbms.QoutesI,
 	) error
-	UpdateItems(
+	UpdateItem(
 		f rdbms.QuoteItemI,
 	) error
 }

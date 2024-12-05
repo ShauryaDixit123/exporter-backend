@@ -52,7 +52,7 @@ func (r *Repository) Insert(
 }
 
 func (r *Repository) InsertItems(
-	f rdbms.CreateQuotesItemI,
+	f []rdbms.CreateQuotesItemI,
 ) error {
 	if _, er := r.dbClient.Insert(TABLE_ITEMS).Rows(f).Executor().Exec(); er != nil {
 		return er
@@ -75,7 +75,7 @@ func (r *Repository) Update(
 	return nil
 }
 
-func (r *Repository) UpdateItems(
+func (r *Repository) UpdateItem(
 	f rdbms.QuoteItemI,
 ) error {
 	if _, er := r.dbClient.Update(TABLE_ITEMS).Set(
