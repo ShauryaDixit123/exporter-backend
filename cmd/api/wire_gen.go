@@ -8,6 +8,7 @@ package api
 
 import (
 	"context"
+	"exporterbackend/internal/common/helper"
 	"exporterbackend/internal/configs"
 	"exporterbackend/internal/core/services/countriessrv"
 	"exporterbackend/internal/core/services/currenciessrv"
@@ -70,7 +71,9 @@ func InitializeApp(appName configs.AppName, pgDbConfig configs.PgDbConfig, logCo
 	orderssrvService := orderssrv.New(logger, purchaseorderrepoRepository, lineitemsrepoRepository, salesorderrepoRepository, accountsrepoRepository, workflowssrvService)
 	ordersHandler := orders.NewHandler(logger, orderssrvService)
 	ordersRoutes := orders.New(ordersHandler)
-	v1Routes := v1.New(routes, currenciesRoutes, usersRoutes, workflowsRoutes, ordersRoutes)
+	helperRepository := helper.NewHelperRepository(logger)
+	routeMiddleware := v1.NewMiddleware(helperRepository, usersrepoRepository)
+	v1Routes := v1.New(routes, currenciesRoutes, usersRoutes, workflowsRoutes, ordersRoutes, routeMiddleware)
 	engine := NewHttpEngine(v1Routes)
 	apiApp := NewApp(engine)
 	return apiApp, nil

@@ -6,6 +6,7 @@ package api
 
 import (
 	"context"
+	"exporterbackend/internal/common/helper"
 	"exporterbackend/internal/configs"
 	"exporterbackend/internal/core/ports"
 	"exporterbackend/internal/core/services/countriessrv"
@@ -43,6 +44,8 @@ func InitializeApp(
 		NewGoquInstance,
 
 		//Repositories
+		helper.NewHelperRepository,
+		v1.NewMiddleware,
 		countriesrepo.New,
 		currenciesrepo.New,
 		usersrepo.New,
@@ -52,6 +55,8 @@ func InitializeApp(
 		lineitemsrepo.New,
 		salesorderrepo.New,
 		//Repo Bindings
+		wire.Bind(new(helper.HelperFunctions), new(*helper.HelperRepository)),
+		wire.Bind(new(v1.RouteMiddlewares), new(*v1.RouteMiddleware)),
 		wire.Bind(new(ports.RdbmsCountriesRepository), new(*countriesrepo.Repository)),
 		wire.Bind(new(ports.RdbmsCurrenciesRepository), new(*currenciesrepo.Repository)),
 		wire.Bind(new(ports.RdbmsUsersRepository), new(*usersrepo.Repository)),

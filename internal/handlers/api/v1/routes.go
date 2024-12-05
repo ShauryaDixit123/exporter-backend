@@ -15,11 +15,12 @@ type GroupRoutes interface {
 }
 
 type Routes struct {
-	countryRoutes  countries.GroupRoutes
-	currencyRoutes currencies.GroupRoutes
-	userRoutes     users.GroupRoutes
-	workflowRoutes workflows.GroupRoutes
-	orderRoutes    orders.GroupRoutes
+	countryRoutes     countries.GroupRoutes
+	currencyRoutes    currencies.GroupRoutes
+	userRoutes        users.GroupRoutes
+	workflowRoutes    workflows.GroupRoutes
+	orderRoutes       orders.GroupRoutes
+	routesMiddlewares RouteMiddlewares
 }
 
 func New(
@@ -28,13 +29,15 @@ func New(
 	usersRoutes users.GroupRoutes,
 	workflowRoutes workflows.GroupRoutes,
 	orderRoutes orders.GroupRoutes,
+	routesMiddlewares RouteMiddlewares,
 ) *Routes {
 	return &Routes{
-		countryRoutes:  countryRoutes,
-		currencyRoutes: currencyRoutes,
-		userRoutes:     usersRoutes,
-		workflowRoutes: workflowRoutes,
-		orderRoutes:    orderRoutes,
+		countryRoutes:     countryRoutes,
+		currencyRoutes:    currencyRoutes,
+		userRoutes:        usersRoutes,
+		workflowRoutes:    workflowRoutes,
+		orderRoutes:       orderRoutes,
+		routesMiddlewares: routesMiddlewares,
 	}
 }
 
@@ -50,13 +53,15 @@ func New(
 // }
 
 func (ro *Routes) Initialize(prefix string, r gin.IRouter) {
-
 	v1 := r.Group(prefix)
-	r.Use()
 	{
+		ro.userRoutes.Initialize("/users", v1)
 		ro.countryRoutes.Initialize("/countries", v1)
 		ro.currencyRoutes.Initialize("/currencies", v1)
-		ro.userRoutes.Initialize("/users", v1)
+	}
+	v1.Use(ro.routesMiddlewares.PermissionsMiddleware())
+	{
+
 		ro.workflowRoutes.Initialize("/workflows", v1)
 		ro.orderRoutes.Initialize("/orders", v1)
 	}
