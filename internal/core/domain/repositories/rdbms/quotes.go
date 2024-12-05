@@ -1,11 +1,13 @@
 package rdbms
 
-import "time"
+import (
+	"time"
+)
 
 type CreateQuotesI struct {
-	AccountID          int       `json:"account_id" db:"account_id"`
-	BuyerID            string    `json:"buyer_id" db:"buyer_id"`
-	SupplierID         string    `json:"supplier_id" db:"supplier_id"`
+	AccountID int    `json:"account_id" db:"account_id"`
+	BuyerID   string `json:"buyer_id" db:"buyer_id"`
+	// SupplierID         string    `json:"supplier_id" db:"supplier_id"`
 	Title              string    `json:"title" db:"title"`
 	Description        string    `json:"description" db:"description"`
 	IncoTerms          string    `json:"inco_terms" db:"inco_terms"`
@@ -43,4 +45,38 @@ type CreateQuotesItemI struct {
 type QuoteItemI struct {
 	ID string `json:"id" db:"id"`
 	CreateQuotesItemI
+}
+type CreateRFQItemI struct {
+	QuoteID      string    `json:"quote_id" db:"quote_id"`
+	RFQItemID    string    `json:"rfq_item_id" db:"rfq_item_id"`
+	Rate         int       `json:"rate" db:"rate"`
+	RateUnit     string    `json:"rate_unit" db:"rate_unit"` // Assuming 10 char max
+	ImageID      *string   `json:"image_id" db:"image_id"`   // Nullable
+	Quantity     int       `json:"quantity" db:"quantity"`
+	QuantityUnit string    `json:"quantity_unit" db:"quantity_unit"` // Assuming 16 char max
+	DeliveryDate string    `json:"delivery_date" db:"delivery_date"` // Assuming 16 char max
+	Status       string    `json:"status" db:"status"`               // Assuming 18 char max
+	CreatedOn    time.Time `json:"created_on" db:"created_on"`
+	ModifiedAt   time.Time `json:"modified_at" db:"modified_at"`
+}
+type RFQItemI struct {
+	ID string `json:"id" db:"id"`
+	CreateRFQItemI
+}
+
+type CreateRFQI struct {
+	RFQID              string    `json:"rfq_id" db:"rfq_id"`
+	SupplierID         string    `json:"supplier_id" db:"supplier_id"`
+	Active             bool      `json:"active" db:"active"`
+	DueDate            time.Time `json:"due_date" db:"due_date"`
+	Status             string    `json:"status" db:"status"` // Assuming 18 char max
+	TermsAndConditions string    `json:"terms_and_conditions" db:"terms_and_conditions"`
+	Remarks            string    `json:"remarks" db:"remarks"`
+	RejectionReason    string    `json:"rejection_reason" db:"rejection_reason"`
+	CreatedOn          time.Time `json:"created_on" db:"created_on"`
+	ModifiedAt         time.Time `json:"modified_at" db:"modified_at"`
+}
+type RFQI struct {
+	ID string `json:"id" db:"id"`
+	CreateRFQI
 }

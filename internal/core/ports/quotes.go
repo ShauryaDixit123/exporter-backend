@@ -3,16 +3,16 @@ package ports
 import "exporterbackend/internal/core/domain/repositories/rdbms"
 
 type RdbmsQuotesRepository interface {
-	Insert(
+	InsertRequest(
 		f rdbms.CreateQuotesI,
 	) (int, error)
-	InsertItems(
+	InsertRequestItems(
 		f []rdbms.CreateQuotesItemI,
 	) error
-	Update(
+	UpdateRequest(
 		f rdbms.QoutesI,
 	) error
-	UpdateItem(
+	UpdateRequestItem(
 		f rdbms.QuoteItemI,
 	) error
 }

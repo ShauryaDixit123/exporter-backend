@@ -22,15 +22,14 @@ func New(
 	}
 }
 
-func (r *Repository) Insert(
+func (r *Repository) InsertRequest(
 	f rdbms.CreateQuotesI,
 ) (int, error) {
 	var Id int
-	if _, er := r.dbClient.Insert(TABLE).Rows(
+	if _, er := r.dbClient.Insert(TABLE_REQUEST_FOR_QUOTE).Rows(
 		goqu.Record{
 			ACCOUNT_ID:           f.AccountID,
 			BUYER_ID:             f.BuyerID,
-			SUPPLIER_ID:          f.SupplierID,
 			TITLE:                f.Title,
 			DESCRIPTION:          f.Description,
 			INCO_TERMS:           f.IncoTerms,
@@ -51,20 +50,20 @@ func (r *Repository) Insert(
 	return Id, nil
 }
 
-func (r *Repository) InsertItems(
+func (r *Repository) InsertRequestItems(
 	f []rdbms.CreateQuotesItemI,
 ) error {
-	if _, er := r.dbClient.Insert(TABLE_ITEMS).Rows(f).Executor().Exec(); er != nil {
+	if _, er := r.dbClient.Insert(TABLE_REQUEST_FOR_QUOTE_ITEMS).Rows(f).Executor().Exec(); er != nil {
 		return er
 	}
 	return nil
 }
 
 // re work required in updates
-func (r *Repository) Update(
+func (r *Repository) UpdateRequest(
 	f rdbms.QoutesI,
 ) error {
-	if _, er := r.dbClient.Update(TABLE).Set(
+	if _, er := r.dbClient.Update(TABLE_REQUEST_FOR_QUOTE).Set(
 		goqu.Record{
 			TITLE:       f.Title,
 			DESCRIPTION: f.Description,
@@ -75,10 +74,10 @@ func (r *Repository) Update(
 	return nil
 }
 
-func (r *Repository) UpdateItem(
+func (r *Repository) UpdateRequestItem(
 	f rdbms.QuoteItemI,
 ) error {
-	if _, er := r.dbClient.Update(TABLE_ITEMS).Set(
+	if _, er := r.dbClient.Update(TABLE_REQUEST_FOR_QUOTE_ITEMS).Set(
 		goqu.Record{
 			QUANTITY:    f.Quantity,
 			TITLE:       f.Title,
