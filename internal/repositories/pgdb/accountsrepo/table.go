@@ -6,6 +6,7 @@ const TABLE_ACCOUNT_INSTANCE = "flow_instances_accounts"
 const (
 	ID                          = "id"
 	PRIMARY_USER_ID             = "primary_user_id"
+	GST_NO                      = "gst_no"
 	IS_ACTIVE                   = "is_active"
 	DEFAULT_WORKFLOW_PRE_ORDER  = "default_workflow_pre_order"
 	DEFAULT_WORKFLOW_POST_ORDER = "default_workflow_post_order"

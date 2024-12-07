@@ -94,6 +94,7 @@ func (r *Repository) GetUserAccountsById(id string) ([]rdbms.AccountI, error) {
 	var acc []rdbms.AccountI
 	q := r.dbClient.From(TABLE).Select(
 		goqu.I(fmt.Sprintf("%s.%s", TABLE, ID)).As("id"),
+		GST_NO,
 		PRIMARY_USER_ID,
 		IS_ACTIVE,
 	).Join(goqu.I(TABLE_JOINED), goqu.On(
@@ -107,7 +108,7 @@ func (r *Repository) GetUserAccountsById(id string) ([]rdbms.AccountI, error) {
 		return []rdbms.AccountI{}, er
 	}
 	fmt.Println(rq, "qjjqjq")
-	if _, er := q.ScanStruct(&acc); er != nil {
+	if er := q.ScanStructs(&acc); er != nil {
 		fmt.Println(er, "errjrjr")
 		return []rdbms.AccountI{}, er
 	}

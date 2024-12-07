@@ -8,8 +8,9 @@ import (
 
 type AccountI struct {
 	Id                       int       `db:"id" json:"id"`
-	PrimaryUserID            uuid.UUID `db:"primary_user_id" json:"primary_user_id"`
+	PrimaryUserID            string    `db:"primary_user_id" json:"primary_user_id"`
 	IsActive                 bool      `db:"is_active" json:"is_active"`
+	GstNo                    int       `db:"gst_no" json:"gst_no"`
 	DefaultWorkflowPreOrder  string    `db:"default_workflow_pre_order" json:"default_workflow_pre_order"`
 	DefaultWorkflowPostOrder string    `db:"default_workflow_post_order" json:"default_workflow_post_order"`
 	CreatedAt                time.Time `db:"created_at" json:"created_at"`
