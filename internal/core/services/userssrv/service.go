@@ -5,6 +5,7 @@ import (
 	"exporterbackend/internal/core/ports"
 	"exporterbackend/pkg/logging"
 
+	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -105,4 +106,23 @@ func (s *Service) createAccount(
 		AccountId: acid,
 		UserId:    u.PrimaryUserID,
 	})
+}
+
+func (s *Service) GetUserById(f rdbms.Id) (rdbms.GetUserResponse, error) {
+	uid, er := uuid.Parse(f.Id)
+	if er != nil {
+		return rdbms.GetUserResponse{}, er
+	}
+	acc, er := s.accountsRepo.GetUserAccountsById(f.Id)
+	if er != nil {
+		return rdbms.GetUserResponse{}, er
+	}
+	ud, er := s.usersRepo.GetById(uid)
+	if er != nil {
+		return rdbms.GetUserResponse{}, er
+	}
+	return rdbms.GetUserResponse{
+		UserI:    ud,
+		Accounts: acc,
+	}, nil
 }

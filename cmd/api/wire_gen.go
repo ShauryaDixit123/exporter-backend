@@ -13,12 +13,14 @@ import (
 	"exporterbackend/internal/core/services/countriessrv"
 	"exporterbackend/internal/core/services/currenciessrv"
 	"exporterbackend/internal/core/services/orderssrv"
+	"exporterbackend/internal/core/services/quotessrv"
 	"exporterbackend/internal/core/services/userssrv"
 	"exporterbackend/internal/core/services/workflowssrv"
 	"exporterbackend/internal/handlers/api/v1"
 	"exporterbackend/internal/handlers/api/v1/countries"
 	"exporterbackend/internal/handlers/api/v1/currencies"
 	"exporterbackend/internal/handlers/api/v1/orders"
+	"exporterbackend/internal/handlers/api/v1/quotes"
 	"exporterbackend/internal/handlers/api/v1/users"
 	"exporterbackend/internal/handlers/api/v1/workflows"
 	"exporterbackend/internal/repositories/pgdb/accountsrepo"
@@ -27,6 +29,7 @@ import (
 	"exporterbackend/internal/repositories/pgdb/ordersrepo/lineitemsrepo"
 	"exporterbackend/internal/repositories/pgdb/ordersrepo/purchaseorderrepo"
 	"exporterbackend/internal/repositories/pgdb/ordersrepo/salesorderrepo"
+	"exporterbackend/internal/repositories/pgdb/quotesrepo"
 	"exporterbackend/internal/repositories/pgdb/usersrepo"
 	"exporterbackend/internal/repositories/pgdb/workflowrepo"
 )
@@ -71,9 +74,13 @@ func InitializeApp(appName configs.AppName, pgDbConfig configs.PgDbConfig, logCo
 	orderssrvService := orderssrv.New(logger, purchaseorderrepoRepository, lineitemsrepoRepository, salesorderrepoRepository, accountsrepoRepository, workflowssrvService)
 	ordersHandler := orders.NewHandler(logger, orderssrvService)
 	ordersRoutes := orders.New(ordersHandler)
+	quotesrepoRepository := quotesrepo.New(logger, database)
+	quotessrvService := quotessrv.New(logger, quotesrepoRepository)
+	quotesHandler := quotes.NewHandler(logger, quotessrvService)
+	quotesRoutes := quotes.New(quotesHandler)
 	helperRepository := helper.NewHelperRepository(logger)
-	routeMiddleware := v1.NewMiddleware(helperRepository, usersrepoRepository)
-	v1Routes := v1.New(routes, currenciesRoutes, usersRoutes, workflowsRoutes, ordersRoutes, routeMiddleware)
+	routeMiddleware := v1.NewMiddleware(logger, helperRepository, usersrepoRepository)
+	v1Routes := v1.New(routes, currenciesRoutes, usersRoutes, workflowsRoutes, ordersRoutes, quotesRoutes, routeMiddleware)
 	engine := NewHttpEngine(v1Routes)
 	apiApp := NewApp(engine)
 	return apiApp, nil

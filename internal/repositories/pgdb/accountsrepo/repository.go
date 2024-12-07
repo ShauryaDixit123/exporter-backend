@@ -3,6 +3,7 @@ package accountsrepo
 import (
 	"exporterbackend/internal/core/domain/repositories/rdbms"
 	"exporterbackend/pkg/logging"
+	"fmt"
 
 	"github.com/doug-martin/goqu/v9"
 )
@@ -88,4 +89,27 @@ func (r *Repository) InsertFlowInstanceAccount(
 		return er
 	}
 	return nil
+}
+func (r *Repository) GetUserAccountsById(id string) ([]rdbms.AccountI, error) {
+	var acc []rdbms.AccountI
+	q := r.dbClient.From(TABLE).Select(
+		goqu.I(fmt.Sprintf("%s.%s", TABLE, ID)).As("id"),
+		PRIMARY_USER_ID,
+		IS_ACTIVE,
+	).Join(goqu.I(TABLE_JOINED), goqu.On(
+		goqu.I(fmt.Sprintf("%s.%s", TABLE_JOINED, ACCOUNT_ID)).Eq(
+			goqu.I(fmt.Sprintf("%s.%s", TABLE, ID)),
+		))).Where(goqu.Ex{
+		fmt.Sprintf("%s.%s", TABLE_JOINED, USER_ID): id,
+	})
+	rq, _, er := q.ToSQL()
+	if er != nil {
+		return []rdbms.AccountI{}, er
+	}
+	fmt.Println(rq, "qjjqjq")
+	if _, er := q.ScanStruct(&acc); er != nil {
+		fmt.Println(er, "errjrjr")
+		return []rdbms.AccountI{}, er
+	}
+	return acc, nil
 }

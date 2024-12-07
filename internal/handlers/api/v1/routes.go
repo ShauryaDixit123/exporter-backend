@@ -4,6 +4,7 @@ import (
 	"exporterbackend/internal/handlers/api/v1/countries"
 	"exporterbackend/internal/handlers/api/v1/currencies"
 	"exporterbackend/internal/handlers/api/v1/orders"
+	"exporterbackend/internal/handlers/api/v1/quotes"
 	"exporterbackend/internal/handlers/api/v1/users"
 	"exporterbackend/internal/handlers/api/v1/workflows"
 
@@ -20,6 +21,7 @@ type Routes struct {
 	userRoutes        users.GroupRoutes
 	workflowRoutes    workflows.GroupRoutes
 	orderRoutes       orders.GroupRoutes
+	quoteRoutes       quotes.GroupRoutes
 	routesMiddlewares RouteMiddlewares
 }
 
@@ -29,6 +31,7 @@ func New(
 	usersRoutes users.GroupRoutes,
 	workflowRoutes workflows.GroupRoutes,
 	orderRoutes orders.GroupRoutes,
+	quoteRoutes quotes.GroupRoutes,
 	routesMiddlewares RouteMiddlewares,
 ) *Routes {
 	return &Routes{
@@ -37,6 +40,7 @@ func New(
 		userRoutes:        usersRoutes,
 		workflowRoutes:    workflowRoutes,
 		orderRoutes:       orderRoutes,
+		quoteRoutes:       quoteRoutes,
 		routesMiddlewares: routesMiddlewares,
 	}
 }
@@ -64,5 +68,6 @@ func (ro *Routes) Initialize(prefix string, r gin.IRouter) {
 
 		ro.workflowRoutes.Initialize("/workflows", v1)
 		ro.orderRoutes.Initialize("/orders", v1)
+		ro.quoteRoutes.Initialize("/quotes", v1)
 	}
 }

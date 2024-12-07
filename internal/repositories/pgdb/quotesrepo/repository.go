@@ -5,6 +5,7 @@ import (
 	"exporterbackend/pkg/logging"
 
 	"github.com/doug-martin/goqu/v9"
+	"github.com/gofrs/uuid"
 )
 
 type Repository struct {
@@ -24,8 +25,8 @@ func New(
 
 func (r *Repository) InsertRFQ(
 	f rdbms.CreateRFQI,
-) (int, error) {
-	var Id int
+) (string, error) {
+	var Id uuid.UUID
 	if _, er := r.dbClient.Insert(TABLE_REQUEST_FOR_QUOTE).Rows(
 		goqu.Record{
 			ACCOUNT_ID:           f.AccountID,
@@ -45,9 +46,9 @@ func (r *Repository) InsertRFQ(
 			CREATED_ON:           f.CreatedOn,
 		},
 	).Returning("id").Executor().ScanStruct(&Id); er != nil {
-		return 0, er
+		return "", er
 	}
-	return Id, nil
+	return Id.String(), nil
 }
 
 func (r *Repository) InsertRFQItems(
@@ -91,6 +92,57 @@ func (r *Repository) UpdateRequestItem(
 	return nil
 }
 
-// func (r *Repository) InsertQuote(
-// 	f rdbms.CreateRFQI
-// )
+func (r *Repository) InsertQuote(
+	f rdbms.CreateQuotesI,
+) (string, error) {
+	var id uuid.UUID
+	if _, er := r.dbClient.Insert(TABLE_QUOTES).Rows(f).Returning("id").Executor().ScanStruct(&id); er != nil {
+		return "", er
+	}
+	return id.String(), nil
+}
+
+func (r *Repository) InsertQuoteItems(
+	f []rdbms.CreateQuotesItemI,
+) error {
+	if _, er := r.dbClient.Insert(TABLE_QUOTES_ITEMS).Rows(f).Executor().Exec(); er != nil {
+		return er
+	}
+	return nil
+}
+
+func (r *Repository) GetRFQsForAccount(
+	f rdbms.GetRFQsForAccountI,
+) ([]rdbms.RFQI, error) {
+	var rfqs []rdbms.RFQI
+	if er := r.dbClient.Select(
+		goqu.Star(),
+	).From(TABLE_REQUEST_FOR_QUOTE).Where(goqu.Ex{ACCOUNT_ID: f.ID}).Executor().ScanStructs(&rfqs); er != nil {
+		return nil, er
+	}
+	return rfqs, nil
+}
+
+func (r *Repository) GetRFQ(
+	f rdbms.GetRFQI,
+) (rdbms.RFQI, error) {
+	var rfq rdbms.RFQI
+	if _, er := r.dbClient.Select(
+		goqu.Star(),
+	).From(TABLE_REQUEST_FOR_QUOTE).Where(goqu.Ex{ID: f.ID}).Executor().ScanStruct(&rfq); er != nil {
+		return rdbms.RFQI{}, er
+	}
+	return rfq, nil
+}
+
+func (r *Repository) GetRFQItems(
+	f rdbms.GetRFQI,
+) ([]rdbms.RFQItemI, error) {
+	var rfqItems []rdbms.RFQItemI
+	if er := r.dbClient.Select(
+		goqu.Star(),
+	).From(TABLE_REQUEST_FOR_QUOTE_ITEMS).Where(goqu.Ex{RFQ_RFQ_ID: f.ID}).Executor().ScanStructs(&rfqItems); er != nil {
+		return nil, er
+	}
+	return rfqItems, nil
+}

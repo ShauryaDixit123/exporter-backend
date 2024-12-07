@@ -1,4 +1,4 @@
-package orders
+package quotes
 
 import "github.com/gin-gonic/gin"
 
@@ -17,9 +17,10 @@ func New(
 		handler: handler,
 	}
 }
+
 func (ro *Routes) Initialize(prefix string, r gin.IRouter) {
 	g := r.Group(prefix)
 	{
-		g.POST("/rfq", ro.handler.Create)
+		g.POST("/rfq", ro.handler.CreateRFQ)
 	}
 }

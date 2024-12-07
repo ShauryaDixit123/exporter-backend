@@ -10,7 +10,7 @@
       "sales_orders.read",
       "sales_orders.update.status",
       "sales_orders.update.rejection_reason",
-      "rfq.create.status.request",
+      "rfq.create.status.pending",
       "rfq.update",
       "rfq_items.create",
       "quotes.read",
@@ -33,9 +33,9 @@
       "quotes_items.create",
       "quotes.read",
       "quotes_items.read",
-      "quotes_items.upate.rate",
-      "quotes_items.upate.rate_unit",
-      "quotes_items.upate.quantity"
+      "quotes_items.update.rate",
+      "quotes_items.update.rate_unit",
+      "quotes_items.update.quantity"
     ]
   },
   "admin": {

@@ -3,6 +3,7 @@ package usersrepo
 import (
 	"exporterbackend/internal/core/domain/repositories/rdbms"
 	"exporterbackend/pkg/logging"
+	"fmt"
 
 	"github.com/doug-martin/goqu/v9"
 	"github.com/google/uuid"
@@ -38,8 +39,9 @@ func (r *Repository) Insert(d rdbms.CreateUserI) (uuid.UUID, error) {
 	return id, nil
 }
 
-func (r *Repository) GetById(id rdbms.Id) (rdbms.UserI, error) {
+func (r *Repository) GetById(id uuid.UUID) (rdbms.UserI, error) {
 	var user rdbms.UserI
+	fmt.Println(id, "ududud")
 	if _, er := r.dbClient.From(TABLE).Select(
 		ID,
 		NAME,
@@ -47,12 +49,13 @@ func (r *Repository) GetById(id rdbms.Id) (rdbms.UserI, error) {
 		ROLE_ID,
 		PASSWORD,
 		IS_PARENT,
+		ACCESS_TOKEN,
 		IS_ACTIVE,
 		PRIMARY_LOCATION_ID,
 		CREATED_AT,
 		MODIFIED_AT,
 	).Where(goqu.Ex{
-		ID: id.Id,
+		ID: id,
 	}).ScanStruct(&user); er != nil {
 		return rdbms.UserI{}, er
 	}

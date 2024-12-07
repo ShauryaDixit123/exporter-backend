@@ -8,11 +8,12 @@ import (
 
 type RdbmsUsersRepository interface {
 	Insert(d rdbms.CreateUserI) (uuid.UUID, error)
-	GetById(id rdbms.Id) (rdbms.UserI, error)
+	GetById(id uuid.UUID) (rdbms.UserI, error)
 }
 
 type UsersService interface {
 	Create(
 		u rdbms.CreateUserRequestI,
 	) (string, error)
+	GetUserById(f rdbms.Id) (rdbms.GetUserResponse, error)
 }

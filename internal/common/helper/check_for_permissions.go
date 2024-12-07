@@ -9,7 +9,6 @@ import (
 )
 
 func (h *HelperRepository) CheckForPermissions(p common.PermissionCheck) bool {
-	fmt.Println(p.RoleId, "mxcxmcmzx")
 	perms, er := readPermissionsJSON("/Users/shauryadixit007/Documents/exp-full/exp/internal/permissions.json")
 	if er != nil {
 		h.logger.Error(
@@ -91,6 +90,9 @@ func (r *HelperRepository) ParseURLAndAction(url, method string) string {
 		"PUT":    "update",
 		"PATCH":  "update",
 		"DELETE": "delete",
+		"READ":   "read",
+		"UPDATE": "update",
+		"CREATE": "create",
 	}
 
 	action, exists := methodToAction[method]

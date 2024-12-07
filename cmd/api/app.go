@@ -8,7 +8,9 @@ import (
 	"exporterbackend/pkg/logging"
 	"fmt"
 	"net/http"
+	"time"
 
+	"github.com/gin-contrib/cors"
 	_ "github.com/jackc/pgx/v4/stdlib"
 
 	"github.com/doug-martin/goqu/v9"
@@ -95,7 +97,14 @@ func NewHttpEngine(
 		}
 		c.AbortWithStatus(http.StatusInternalServerError)
 	}))
-
+	r.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"http://localhost:3000"}, // Frontend origin
+		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowHeaders:     []string{"Content-Type", "Authorization"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true, // Allow cookies and Authorization headers
+		MaxAge:           12 * time.Hour,
+	}))
 	r.GET("/ping", func(c *gin.Context) { c.JSON(200, gin.H{"message": "pong"}) })
 
 	v1Routes.Initialize("/v1", r)

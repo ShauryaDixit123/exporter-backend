@@ -12,4 +12,5 @@ type RdbmsAccountsRepository interface {
 	InsertFlowInstanceAccount(
 		d rdbms.CreateFlowInstanceAccountI,
 	) error
+	GetUserAccountsById(id string) ([]rdbms.AccountI, error)
 }

@@ -41,7 +41,7 @@ type QuoteItemI struct {
 }
 type CreateRFQItemI struct {
 	QuoteID      string    `json:"quote_id" db:"quote_id"`
-	RFQItemID    string    `json:"rfq_item_id" db:"rfq_item_id"`
+	RFQID        string    `json:"rfq_id" db:"rfq_id"`
 	Rate         int       `json:"rate" db:"rate"`
 	RateUnit     string    `json:"rate_unit" db:"rate_unit"` // Assuming 10 char max
 	ImageID      *string   `json:"image_id" db:"image_id"`   // Nullable
@@ -76,7 +76,26 @@ type CreateRFQI struct {
 	CreatedOn          time.Time `json:"created_on" db:"created_on"`
 	ModifiedAt         time.Time `json:"modified_at" db:"modified_at"`
 }
+type CreateRFQRequestI struct {
+	CreateRFQI
+	Items []CreateRFQItemI
+}
 type RFQI struct {
 	ID string `json:"id" db:"id"`
 	CreateRFQI
+}
+type CreateQuoteRequestI struct {
+	CreateQuotesI
+	Items []CreateQuotesItemI `json:"items"`
+}
+type RFQResponseI struct {
+	RFQI
+	Items []RFQItemI `json:"items"`
+}
+
+type GetRFQsForAccountI struct {
+	ID int `json:"id" db:"id"`
+}
+type GetRFQI struct {
+	ID string `json:"id" db:"id"`
 }

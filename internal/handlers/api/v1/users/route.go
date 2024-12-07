@@ -22,5 +22,6 @@ func (ro *Routes) Initialize(prefix string, r gin.IRouter) {
 	g := r.Group(prefix)
 	{
 		g.POST("", ro.handler.Create)
+		g.GET("/:id", ro.handler.Get)
 	}
 }
