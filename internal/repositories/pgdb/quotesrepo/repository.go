@@ -31,6 +31,7 @@ func (r *Repository) InsertRFQ(
 		goqu.Record{
 			ACCOUNT_ID:           f.AccountID,
 			BUYER_ID:             f.BuyerID,
+			SUPPLIER_ID:          f.SupplierID,
 			TITLE:                f.Title,
 			DESCRIPTION:          f.Description,
 			INCO_TERMS:           f.IncoTerms,
@@ -42,6 +43,7 @@ func (r *Repository) InsertRFQ(
 			DUE_DATE:             f.DueDate,
 			STATUS:               f.Status,
 			TERMS_AND_CONDITIONS: f.TermsAndConditions,
+			NOTES:                f.Notes,
 			CREATED_BY:           f.CreatedBy,
 			CREATED_ON:           f.CreatedOn,
 		},

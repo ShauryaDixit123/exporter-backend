@@ -16,6 +16,7 @@ const (
 	DUE_DATE             = "due_date"
 	STATUS               = "status"
 	TERMS_AND_CONDITIONS = "terms_and_conditions"
+	NOTES                = "notes"
 	CREATED_BY           = "created_by"
 	CREATED_ON           = "created_on"
 	MODIFIED_AT          = "modified_at"
