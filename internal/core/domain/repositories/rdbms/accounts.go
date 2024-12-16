@@ -36,3 +36,8 @@ type CreateFlowInstanceAccountI struct {
 	FlowInstanceId string `db:"instance_id" json:"instance_id"`
 	AccountId      int    `db:"account_id" json:"account_id"`
 }
+
+type GetUserForAccount struct {
+	RoleId    int `db:"role_id" json:"id"`
+	AccountId int `db:"account_id" json:"account_id"`
+}

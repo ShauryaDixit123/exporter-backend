@@ -62,4 +62,35 @@ func (r *Repository) GetById(id uuid.UUID) (rdbms.UserI, error) {
 	return user, nil
 }
 
+func (r *Repository) GetUsersForAccount(
+	f rdbms.GetUserForAccount,
+) ([]rdbms.UserI, error) {
+	var rs []rdbms.UserI
+	if er := r.dbClient.From("accounts_users_map").Select(
+		ID,
+		NAME,
+		EMAIL,
+		ROLE_ID,
+		PASSWORD,
+		IS_PARENT,
+		ACCESS_TOKEN,
+		IS_ACTIVE,
+		PRIMARY_LOCATION_ID,
+		CREATED_AT,
+		MODIFIED_AT,
+	).Join(
+		goqu.T(TABLE), goqu.On(
+			goqu.I(fmt.Sprintf("%s.%s", "accounts_users_map", USER_ID)).Eq(goqu.I(fmt.Sprintf("%s.%s", TABLE, ID))),
+		),
+	).Where(
+		goqu.Ex{
+			fmt.Sprintf("%s.%s", "accounts_users_map", ACCOUNT_ID): f.AccountId,
+			fmt.Sprintf("%s.%s", TABLE, "role_id"):                 f.RoleId,
+		},
+	).Executor().ScanStructs(rs); er != nil {
+		return []rdbms.UserI{}, er
+	}
+	return rs, nil
+}
+
 // func (r *Repository) GetAccountOfUser

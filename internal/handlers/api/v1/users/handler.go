@@ -22,4 +22,7 @@ func NewHandler(logger logging.Logger, userService ports.UsersService) *Handler 
 type RoutesHandler interface {
 	Create(ctx *gin.Context)
 	Get(ctx *gin.Context)
+	GetUsersForAccount(
+		ctx *gin.Context,
+	)
 }

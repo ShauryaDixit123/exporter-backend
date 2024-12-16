@@ -126,3 +126,9 @@ func (s *Service) GetUserById(f rdbms.Id) (rdbms.GetUserResponse, error) {
 		Accounts: acc,
 	}, nil
 }
+
+func (s *Service) GetUsersForAccount(
+	f rdbms.GetUserForAccount,
+) ([]rdbms.UserI, error) {
+	return s.usersRepo.GetUsersForAccount(f)
+}
