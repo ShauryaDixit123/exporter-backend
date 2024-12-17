@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS quotes_items (
     rfq_item_id UUID REFERENCES request_for_quote_items (id),
     rate INT,
     rate_unit VARCHAR(10) REFERENCES currencies (iso_code),
-    image_id UUID DEFAULT NULL,
+    image_id UUID[] NOT NULL DEFAULT '{}',
     quantity INT NOT NULL,
     quantity_unit VARCHAR(16) NOT NULL,
     delivery_date VARCHAR(16) NOT NULL,

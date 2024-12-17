@@ -10,19 +10,22 @@ import (
 )
 
 type Service struct {
-	logger       logging.Logger
-	usersRepo    ports.RdbmsUsersRepository
-	accountsRepo ports.RdbmsAccountsRepository
+	logger        logging.Logger
+	usersRepo     ports.RdbmsUsersRepository
+	accountsRepo  ports.RdbmsAccountsRepository
+	locationsRepo ports.RdbmsLocationsRepository
 }
 
 func New(logger logging.Logger,
 	usersRepo ports.RdbmsUsersRepository,
 	accountsRepo ports.RdbmsAccountsRepository,
+	locationsRepo ports.RdbmsLocationsRepository,
 ) *Service {
 	return &Service{
-		logger:       logger,
-		usersRepo:    usersRepo,
-		accountsRepo: accountsRepo,
+		logger:        logger,
+		usersRepo:     usersRepo,
+		accountsRepo:  accountsRepo,
+		locationsRepo: locationsRepo,
 	}
 }
 func (s *Service) Create(
@@ -131,4 +134,10 @@ func (s *Service) GetUsersForAccount(
 	f rdbms.GetUserForAccount,
 ) ([]rdbms.UserI, error) {
 	return s.usersRepo.GetUsersForAccount(f)
+}
+
+func (s *Service) GetLocationsForUser(
+	f rdbms.GetUserLocationsI,
+) ([]rdbms.LocationI, error) {
+	return s.locationsRepo.GetUserLocations(f)
 }

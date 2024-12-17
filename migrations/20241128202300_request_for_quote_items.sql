@@ -3,7 +3,7 @@
 CREATE TABLE IF NOT EXISTS request_for_quote_items (
     id UUID UNIQUE NOT NULL DEFAULT uuid_generate_v4(),
     item_code VARCHAR(64),
-    image_id UUID DEFAULT NULL,
+    image_id UUID[] NOT NULL DEFAULT '{}',
     store_id VARCHAR(128) DEFAULT NULL,
     title VARCHAR(64),
     description VARCHAR(64) NOT NULL,

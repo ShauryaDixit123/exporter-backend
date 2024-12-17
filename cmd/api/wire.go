@@ -25,10 +25,12 @@ import (
 	"exporterbackend/internal/repositories/pgdb/accountsrepo"
 	"exporterbackend/internal/repositories/pgdb/countriesrepo"
 	"exporterbackend/internal/repositories/pgdb/currenciesrepo"
+	"exporterbackend/internal/repositories/pgdb/locationsrepo"
 	"exporterbackend/internal/repositories/pgdb/ordersrepo/lineitemsrepo"
 	"exporterbackend/internal/repositories/pgdb/ordersrepo/purchaseorderrepo"
 	"exporterbackend/internal/repositories/pgdb/ordersrepo/salesorderrepo"
 	"exporterbackend/internal/repositories/pgdb/quotesrepo"
+	"exporterbackend/internal/repositories/pgdb/rolesrepo"
 	"exporterbackend/internal/repositories/pgdb/usersrepo"
 	"exporterbackend/internal/repositories/pgdb/workflowrepo"
 
@@ -58,6 +60,8 @@ func InitializeApp(
 		lineitemsrepo.New,
 		salesorderrepo.New,
 		quotesrepo.New,
+		rolesrepo.New,
+		locationsrepo.New,
 		//Repo Bindings
 
 		wire.Bind(new(helper.HelperFunctions), new(*helper.HelperRepository)),
@@ -71,7 +75,8 @@ func InitializeApp(
 		wire.Bind(new(ports.RdbmsSalesOrderRepoistory), new(*salesorderrepo.Repository)),
 		wire.Bind(new(ports.RdbmsPurchaseOrderLineItemsRepoistory), new(*lineitemsrepo.Repository)),
 		wire.Bind(new(ports.RdbmsQuotesRepository), new(*quotesrepo.Repository)),
-
+		wire.Bind(new(ports.RdbmsRolesRepository), new(*rolesrepo.Repository)),
+		wire.Bind(new(ports.RdbmsLocationsRepository), new(*locationsrepo.Repository)),
 		//Services
 		countriessrv.New,
 		currenciessrv.New,

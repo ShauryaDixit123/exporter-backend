@@ -2,6 +2,7 @@ package helper
 
 import (
 	"exporterbackend/internal/common"
+	"exporterbackend/internal/core/ports"
 	"exporterbackend/pkg/logging"
 )
 
@@ -11,13 +12,16 @@ type HelperFunctions interface {
 }
 
 type HelperRepository struct {
-	logger logging.Logger
+	logger    logging.Logger
+	rolesRepo ports.RdbmsRolesRepository
 }
 
 func NewHelperRepository(
 	logger logging.Logger,
+	rolesRepo ports.RdbmsRolesRepository,
 ) *HelperRepository {
 	return &HelperRepository{
-		logger: logger,
+		logger:    logger,
+		rolesRepo: rolesRepo,
 	}
 }

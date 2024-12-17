@@ -3,6 +3,7 @@ package locationsrepo
 import (
 	"exporterbackend/internal/core/domain/repositories/rdbms"
 	"exporterbackend/pkg/logging"
+	"fmt"
 
 	"github.com/doug-martin/goqu/v9"
 )
@@ -58,4 +59,22 @@ func (r *Repository) GetById(id rdbms.Id) (rdbms.LocationI, error) {
 		return rdbms.LocationI{}, er
 	}
 	return user, nil
+}
+func (r *Repository) GetUserLocations(
+	f rdbms.GetUserLocationsI,
+) ([]rdbms.LocationI, error) {
+	var locations []rdbms.LocationI
+	if er := r.dbClient.Select(
+		goqu.I(fmt.Sprintf("%s.%s", TABLE, ID)).As(ID),
+		goqu.I(fmt.Sprintf("%s.%s", TABLE, LINE1)).As(LINE1),
+		goqu.I(fmt.Sprintf("%s.%s", TABLE, LINE2)).As(LINE2),
+		goqu.I(fmt.Sprintf("%s.%s", TABLE, AREA)).As(AREA),
+		goqu.I(fmt.Sprintf("%s.%s", TABLE, CITY)).As(CITY),
+		goqu.I(fmt.Sprintf("%s.%s", TABLE, STATE)).As(STATE),
+		goqu.I(fmt.Sprintf("%s.%s", TABLE, PINCODE)).As(PINCODE),
+		goqu.I(fmt.Sprintf("%s.%s", TABLE, COUNTRY_ID)).As(COUNTRY_ID),
+	).From("users_locations_map").Join(goqu.I(TABLE), goqu.On(goqu.I("locations.id").Eq(goqu.I("users_locations_map.location_id")))).Where(goqu.Ex{"user_id": f.UserId}).Executor().ScanStructs(&locations); er != nil {
+		return nil, er
+	}
+	return locations, nil
 }

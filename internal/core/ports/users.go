@@ -22,4 +22,7 @@ type UsersService interface {
 	GetUsersForAccount(
 		f rdbms.GetUserForAccount,
 	) ([]rdbms.UserI, error)
+	GetLocationsForUser(
+		f rdbms.GetUserLocationsI,
+	) ([]rdbms.LocationI, error)
 }

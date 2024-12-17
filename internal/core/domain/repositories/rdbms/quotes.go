@@ -58,11 +58,9 @@ type RFQItemI struct {
 }
 
 type CreateRFQI struct {
-	AccountID          int       `json:"account_id" db:"account_id"`
-	BuyerID            string    `json:"buyer_id" db:"buyer_id"`
-	SupplierID         string    `json:"supplier_id" db:"supplier_id"`
-	Title              string    `json:"title" db:"title"`
-	Description        string    `json:"description" db:"description"`
+	AccountID int    `json:"account_id" db:"account_id"`
+	BuyerID   string `json:"buyer_id" db:"buyer_id"`
+	// SupplierID         string    `json:"supplier_id" db:"supplier_id"`
 	IncoTerms          string    `json:"inco_terms" db:"inco_terms"`
 	PickupLocationID   int       `json:"pickup_location_id" db:"pickup_location_id"`
 	DropLocationID     int       `json:"drop_location_id" db:"drop_location_id"`

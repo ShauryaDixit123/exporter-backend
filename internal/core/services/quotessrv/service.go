@@ -26,8 +26,6 @@ func (s *Service) CreateRFQ(
 	id, er := s.quotesRepo.InsertRFQ(rdbms.CreateRFQI{
 		AccountID:          f.AccountID,
 		BuyerID:            f.BuyerID,
-		Title:              f.Title,
-		Description:        f.Description,
 		IncoTerms:          f.IncoTerms,
 		PickupLocationID:   f.PickupLocationID,
 		DropLocationID:     f.DropLocationID,

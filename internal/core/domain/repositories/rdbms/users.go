@@ -40,10 +40,11 @@ type GetUserResponse struct {
 }
 
 type RoleI struct {
-	Id         int       `json:"id" db:"id"`
-	Role       string    `json:"role" db:"role"`
-	CreatedAt  time.Time `db:"created_at" json:"created_at"`
-	ModifiedAt time.Time `db:"modified_at" json:"modified_at"`
+	Id           int       `json:"id" db:"id"`
+	Role         string    `json:"role" db:"role"`
+	DisplayValue string    `json:"display_value" db:"display_value"`
+	CreatedAt    time.Time `db:"created_at" json:"created_at"`
+	ModifiedAt   time.Time `db:"modified_at" json:"modified_at"`
 }
 
 type Id struct {
@@ -55,4 +56,8 @@ type IdInt struct {
 
 type GetAccountUsersI struct {
 	AccountId int `db:"account_id" json:"account_id"`
+}
+
+type GetUserLocationsI struct {
+	UserId string `db:"user_id" json:"user_id"`
 }

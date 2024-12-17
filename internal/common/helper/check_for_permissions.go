@@ -3,6 +3,7 @@ package helper
 import (
 	"encoding/json"
 	"exporterbackend/internal/common"
+	"exporterbackend/internal/core/domain/repositories/rdbms"
 	"fmt"
 	"os"
 	"strings"
@@ -22,16 +23,31 @@ func (h *HelperRepository) CheckForPermissions(p common.PermissionCheck) bool {
 		)
 		return false
 	}
+	role, er := h.rolesRepo.GetById(rdbms.Id{
+		Id: fmt.Sprint(p.RoleId),
+	})
+	if er != nil {
+		h.logger.Error(
+			"role get failed",
+			"permissions parsing failed",
+			er,
+			map[string]any{},
+			map[string]any{
+				"permissions": perms,
+			},
+		)
+		return false
+	}
 	fmt.Println(perms, "perms", p.Action)
 	// admin parsing to be added.
-	if p.RoleId == 1 {
+	if role.Role == "buyer" {
 		for _, v := range perms.Buyer.Action {
 			if v == p.Action {
 				return true
 			}
 		}
 	}
-	if p.RoleId == 2 {
+	if role.Role == "supplier" {
 		for _, v := range perms.Supplier.Action {
 			if v == p.Action {
 				return true

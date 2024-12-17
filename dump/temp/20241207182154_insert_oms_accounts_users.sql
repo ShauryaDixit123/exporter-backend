@@ -1,6 +1,21 @@
 -- +goose Up
 -- +goose StatementBegin
 
+INSERT INTO roles (
+    id,
+    name,
+    display_value
+)
+VALUES
+    -- (1, 'super_admin', 'Super Admin'),
+    (2, 'admin', 'Admin'),
+    -- (3, 'user', 'User'),
+    -- (4, 'guest', 'Guest'),
+    -- (5, 'account_admin', 'Account Admin'),
+    (6, 'buyer', 'Buyer'),
+    (7, 'supplier', 'Supplier');
+)
+
 INSERT INTO locations (
     id,
     line1,
@@ -42,8 +57,8 @@ VALUES
     ('ab3ed97e-dc3b-47f3-87fa-62b5ed37740f', 'Diana', 'diana@example.com', 'hashed_password4', FALSE, 'd1c5e9d8-d599-4a87-b80e-3e1f5e6e5c1e', 'b5d36972-7d95-4fa1-84cf-b9f5bd01c8d1', 1, TRUE),
     ('89f5ac69-7cd8-4de5-a3df-8f209ba17d91', 'Eve', 'eve@example.com', 'hashed_password5', FALSE, 'd1c5e9d8-d599-4a87-b80e-3e1f5e6e5c1e', '65f16e8e-2da5-4850-a71b-265c408c4958', 2, TRUE),
     ('e89c69c9-74bf-4c59-bdf0-1ebdd3fd7d73', 'Frank', 'frank@example.com', 'hashed_password6', FALSE, 'd1c5e9d8-d599-4a87-b80e-3e1f5e6e5c1e', '5d74f8e4-8b2f-400f-93f2-1d2e973f2a01', 3, TRUE),
-    ('9877cb4b-1abf-4429-bc2f-e0f75da9266a', 'Grace', 'grace@example.com', 'hashed_password7', FALSE, '243be22a-c33d-4717-a1e4-fbf0efc8fe7c', '00fc8cb7-2f25-4f20-9aa4-c1b8ab5627b5', 1, TRUE),
-    ('30d876a7-4d2a-45d7-a70a-71b07ec2730b', 'Hank', 'hank@example.com', 'hashed_password8', FALSE, '243be22a-c33d-4717-a1e4-fbf0efc8fe7c', '1d5c7a6a-91f4-48f6-94c1-6f94a3b1be29', 2, TRUE),
+    ('9877cb4b-1abf-4429-bc2f-e0f75da9266a', 'Grace', 'grace@example.com', 'hashed_password7', FALSE, '234d08b1f-c313-4239-a309-b830d237b32d', '00fc8cb7-2f25-4f20-9aa4-c1b8ab5627b5', 1, TRUE),
+    ('30d876a7-4d2a-45d7-a70a-71b07ec2730b', 'Hank', 'hank@example.com', 'hashed_password8', FALSE, '234d08b1f-c313-4239-a309-b830d237b32d', '1d5c7a6a-91f4-48f6-94c1-6f94a3b1be29', 2, TRUE),
     ('b5d36972-7d95-4fa1-84cf-b9f5bd01c8d1', 'Ivy', 'ivy@example.com', 'hashed_password9', FALSE, '51c745f0-d073-4387-9fd0-e27a73a998c2', 'ab3ed97e-dc3b-47f3-87fa-62b5ed37740f', 3, TRUE),
     ('65f16e8e-2da5-4850-a71b-265c408c4958', 'Jack', 'jack@example.com', 'hashed_password10', FALSE, '243be22a-c33d-4717-a1e4-fbf0efc8fe7c', '89f5ac69-7cd8-4de5-a3df-8f209ba17d91', 1, TRUE);
 
@@ -73,19 +88,33 @@ VALUES
 )
 VALUES
     ('5d74f8e4-8b2f-400f-93f2-1d2e973f2a01', 11),
-    ('5d74f8e4-8b2f-400f-93f2-1d2e973f2a01', 22),
-    ('5d74f8e4-8b2f-400f-93f2-1d2e973f2a01', 43),
     ('00fc8cb7-2f25-4f20-9aa4-c1b8ab5627b5', 22),
     ('1d5c7a6a-91f4-48f6-94c1-6f94a3b1be29', 43),
     ('ab3ed97e-dc3b-47f3-87fa-62b5ed37740f', 45),
     ('89f5ac69-7cd8-4de5-a3df-8f209ba17d91', 59),
     ('e89c69c9-74bf-4c59-bdf0-1ebdd3fd7d73', 60),
-    ('e89c69c9-74bf-4c59-bdf0-1ebdd3fd7d73', 73),
     ('9877cb4b-1abf-4429-bc2f-e0f75da9266a', 73),
     ('30d876a7-4d2a-45d7-a70a-71b07ec2730b', 83),
     ('b5d36972-7d95-4fa1-84cf-b9f5bd01c8d1', 91),
     ('65f16e8e-2da5-4850-a71b-265c408c4958', 102);
 
+-- User 1: e89c69c9-74bf-4c59-bdf0-1ebdd3fd7d73
+INSERT INTO users_locations_map (user_id, location_id, is_active)
+VALUES 
+    ('e89c69c9-74bf-4c59-bdf0-1ebdd3fd7d73', '244be22a-c33d-4717-a1e4-fbf0efc8fe7c', TRUE),
+    ('e89c69c9-74bf-4c59-bdf0-1ebdd3fd7d73', '93b7e213-bd67-4328-b7cd-1b27189b8c8a', TRUE),
+    ('e89c69c9-74bf-4c59-bdf0-1ebdd3fd7d73', 'ac2276a1-47d2-41c1-bf19-32d1e9e5e370', TRUE),
+    ('e89c69c9-74bf-4c59-bdf0-1ebdd3fd7d73', '7f05b22a-04b5-429d-8bb4-b1e8d64d2094', TRUE),
+    ('e89c69c9-74bf-4c59-bdf0-1ebdd3fd7d73', '34d08b1f-c313-4239-a309-b830d237b32d', TRUE);
+
+-- User 2: 5d74f8e4-8b2f-400f-93f2-1d2e973f2a01
+INSERT INTO users_locations_map (user_id, location_id, is_active)
+VALUES 
+    ('5d74f8e4-8b2f-400f-93f2-1d2e973f2a01', '46f1d226-3d44-4f2a-937e-3c604c1cc3a1', TRUE),
+    ('5d74f8e4-8b2f-400f-93f2-1d2e973f2a01', 'fc8de1d9-2cc9-4779-bb5d-b7203836b5b0', TRUE),
+    ('5d74f8e4-8b2f-400f-93f2-1d2e973f2a01', 'e2b0b949-df5e-49cf-b9b5-4ac2d64f8e7b', TRUE),
+    ('5d74f8e4-8b2f-400f-93f2-1d2e973f2a01', '51c745f0-d073-4387-9fd0-e27a73a998c2', TRUE),
+    ('5d74f8e4-8b2f-400f-93f2-1d2e973f2a01', '244be22a-c33d-4717-a1e4-fbf0efc8fe7c', TRUE);
 -- +goose StatementEnd
 
 -- +goose Down

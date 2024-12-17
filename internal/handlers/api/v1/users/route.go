@@ -24,6 +24,7 @@ func (ro *Routes) Initialize(prefix string, r gin.IRouter) {
 		g.POST("", ro.handler.Create)
 		g.GET("/:id", ro.handler.Get)
 		g.POST("/account_users", ro.handler.GetUsersForAccount)
+		g.POST("/locations", ro.handler.GetLocations)
 
 	}
 }

@@ -31,9 +31,6 @@ func (r *Repository) InsertRFQ(
 		goqu.Record{
 			ACCOUNT_ID:           f.AccountID,
 			BUYER_ID:             f.BuyerID,
-			SUPPLIER_ID:          f.SupplierID,
-			TITLE:                f.Title,
-			DESCRIPTION:          f.Description,
 			INCO_TERMS:           f.IncoTerms,
 			PICKUP_LOCATION_ID:   f.PickupLocationID,
 			DROP_LOCATION_ID:     f.DropLocationID,
@@ -68,9 +65,7 @@ func (r *Repository) UpdateRFQ(
 ) error {
 	if _, er := r.dbClient.Update(TABLE_REQUEST_FOR_QUOTE).Set(
 		goqu.Record{
-			TITLE:       f.Title,
-			DESCRIPTION: f.Description,
-			STATUS:      f.Status,
+			STATUS: f.Status,
 		}).Where(goqu.Ex{ID: goqu.C(f.ID)}).Executor().Exec(); er != nil {
 		return er
 	}
