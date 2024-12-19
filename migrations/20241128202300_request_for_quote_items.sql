@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS request_for_quote_items (
     image_id UUID[] NOT NULL DEFAULT '{}',
     store_id VARCHAR(128) DEFAULT NULL,
     title VARCHAR(64),
-    description VARCHAR(64) NOT NULL,
+    description VARCHAR(64),
     quantity INT NOT NULL,
     quantity_unit VARCHAR(16) NOT NULL,
     expected_delivery_date DATE NOT NULL,
