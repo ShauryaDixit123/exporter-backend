@@ -7,16 +7,19 @@ import (
 )
 
 type Service struct {
-	logger     logging.Logger
-	quotesRepo ports.RdbmsQuotesRepository
+	logger        logging.Logger
+	quotesRepo    ports.RdbmsQuotesRepository
+	imagesService ports.ImagesService
 }
 
 func New(logger logging.Logger,
 	quotesRepo ports.RdbmsQuotesRepository,
+	imagesService ports.ImagesService,
 ) *Service {
 	return &Service{
-		logger:     logger,
-		quotesRepo: quotesRepo,
+		logger:        logger,
+		quotesRepo:    quotesRepo,
+		imagesService: imagesService,
 	}
 }
 

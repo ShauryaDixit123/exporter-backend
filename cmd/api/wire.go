@@ -7,10 +7,12 @@ package api
 import (
 	"context"
 	"exporterbackend/internal/common/helper"
+	"exporterbackend/internal/common/helper/aws"
 	"exporterbackend/internal/configs"
 	"exporterbackend/internal/core/ports"
 	"exporterbackend/internal/core/services/countriessrv"
 	"exporterbackend/internal/core/services/currenciessrv"
+	"exporterbackend/internal/core/services/imagessrv"
 	"exporterbackend/internal/core/services/orderssrv"
 	"exporterbackend/internal/core/services/quotessrv"
 	"exporterbackend/internal/core/services/userssrv"
@@ -25,6 +27,7 @@ import (
 	"exporterbackend/internal/repositories/pgdb/accountsrepo"
 	"exporterbackend/internal/repositories/pgdb/countriesrepo"
 	"exporterbackend/internal/repositories/pgdb/currenciesrepo"
+	"exporterbackend/internal/repositories/pgdb/imagesrepo"
 	"exporterbackend/internal/repositories/pgdb/locationsrepo"
 	"exporterbackend/internal/repositories/pgdb/ordersrepo/lineitemsrepo"
 	"exporterbackend/internal/repositories/pgdb/ordersrepo/purchaseorderrepo"
@@ -42,12 +45,13 @@ func InitializeApp(
 	pgDbConfig configs.PgDbConfig,
 	logConfig configs.LogConfig,
 	context context.Context,
+	s3Cofig configs.S3Config,
 ) (*app, error) {
 	wire.Build(
 		NewLogger,
 		NewPgDbInstance,
 		NewGoquInstance,
-
+		NewS3Session,
 		//Repositories
 		helper.NewHelperRepository,
 		v1.NewMiddleware,
@@ -62,8 +66,10 @@ func InitializeApp(
 		quotesrepo.New,
 		rolesrepo.New,
 		locationsrepo.New,
+		aws.NewS3,
+		imagesrepo.New,
 		//Repo Bindings
-
+		wire.Bind(new(aws.S3Service), new(*aws.S3)),
 		wire.Bind(new(helper.HelperFunctions), new(*helper.HelperRepository)),
 		wire.Bind(new(v1.RouteMiddlewares), new(*v1.RouteMiddleware)),
 		wire.Bind(new(ports.RdbmsCountriesRepository), new(*countriesrepo.Repository)),
@@ -77,6 +83,7 @@ func InitializeApp(
 		wire.Bind(new(ports.RdbmsQuotesRepository), new(*quotesrepo.Repository)),
 		wire.Bind(new(ports.RdbmsRolesRepository), new(*rolesrepo.Repository)),
 		wire.Bind(new(ports.RdbmsLocationsRepository), new(*locationsrepo.Repository)),
+		wire.Bind(new(ports.RdbmsImagesRepository), new(*imagesrepo.Repository)),
 		//Services
 		countriessrv.New,
 		currenciessrv.New,
@@ -84,6 +91,7 @@ func InitializeApp(
 		workflowssrv.New,
 		orderssrv.New,
 		quotessrv.New,
+		imagessrv.New,
 		//Service Bindings
 		wire.Bind(new(ports.CountriesService), new(*countriessrv.Service)),
 		wire.Bind(new(ports.CurrenciesService), new(*currenciessrv.Service)),
@@ -91,7 +99,7 @@ func InitializeApp(
 		wire.Bind(new(ports.WorkflowService), new(*workflowssrv.Service)),
 		wire.Bind(new(ports.OrdersService), new(*orderssrv.Service)),
 		wire.Bind(new(ports.QuotesService), new(*quotessrv.Service)),
-
+		wire.Bind(new(ports.ImagesService), new(*imagessrv.Service)),
 		//RouteHandlers
 		countries.NewHandler,
 		currencies.NewHandler,

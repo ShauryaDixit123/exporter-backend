@@ -22,5 +22,6 @@ func (ro *Routes) Initialize(prefix string, r gin.IRouter) {
 	g := r.Group(prefix)
 	{
 		g.POST("/rfq", ro.handler.CreateRFQ)
+		g.POST("/rfq/items/images", ro.handler.UploadRFQItemImg)
 	}
 }

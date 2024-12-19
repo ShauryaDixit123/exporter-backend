@@ -67,5 +67,11 @@ func GetConfig(appName configs.AppName) configs.Config {
 			SSLMode:        configs.SSL_MODE_DISABLED,
 		},
 		Context: context.WithValue(&gin.Context{}, "start_up", "undefined"),
+		S3Config: configs.S3Config{
+			AccessKey:    os.Getenv("S3_ACCESS_KEY"),
+			AccessSecret: os.Getenv("S3_ACCESS_SECRET"),
+			Region:       os.Getenv("S3_REGION"),
+			Bucket:       os.Getenv("S3_BUCKET"),
+		},
 	}
 }

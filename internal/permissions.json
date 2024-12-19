@@ -14,7 +14,8 @@
       "rfq.update",
       "rfq_items.create",
       "quotes.read",
-      "quotes_items.read"
+      "quotes_items.read",
+      "rfq_items_images.create"
     ]
   },
   "supplier": {

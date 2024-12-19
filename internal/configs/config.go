@@ -16,6 +16,7 @@ type Config struct {
 	PgDbConfig PgDbConfig
 	LogConfig  LogConfig
 	Context    context.Context
+	S3Config   S3Config
 }
 
 type PgSSLMode string
@@ -35,6 +36,13 @@ type PgDbConfig struct {
 	MaxConnections int
 	MaxIdle        int
 	SSLMode        PgSSLMode
+}
+
+type S3Config struct {
+	AccessKey    string
+	AccessSecret string
+	Region       string
+	Bucket       string
 }
 
 type LogSink int

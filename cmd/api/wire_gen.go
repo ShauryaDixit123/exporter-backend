@@ -9,9 +9,11 @@ package api
 import (
 	"context"
 	"exporterbackend/internal/common/helper"
+	"exporterbackend/internal/common/helper/aws"
 	"exporterbackend/internal/configs"
 	"exporterbackend/internal/core/services/countriessrv"
 	"exporterbackend/internal/core/services/currenciessrv"
+	"exporterbackend/internal/core/services/imagessrv"
 	"exporterbackend/internal/core/services/orderssrv"
 	"exporterbackend/internal/core/services/quotessrv"
 	"exporterbackend/internal/core/services/userssrv"
@@ -26,6 +28,7 @@ import (
 	"exporterbackend/internal/repositories/pgdb/accountsrepo"
 	"exporterbackend/internal/repositories/pgdb/countriesrepo"
 	"exporterbackend/internal/repositories/pgdb/currenciesrepo"
+	"exporterbackend/internal/repositories/pgdb/imagesrepo"
 	"exporterbackend/internal/repositories/pgdb/locationsrepo"
 	"exporterbackend/internal/repositories/pgdb/ordersrepo/lineitemsrepo"
 	"exporterbackend/internal/repositories/pgdb/ordersrepo/purchaseorderrepo"
@@ -43,7 +46,7 @@ import (
 
 // Injectors from wire.go:
 
-func InitializeApp(appName configs.AppName, pgDbConfig configs.PgDbConfig, logConfig configs.LogConfig, context2 context.Context) (*app, error) {
+func InitializeApp(appName configs.AppName, pgDbConfig configs.PgDbConfig, logConfig configs.LogConfig, context2 context.Context, s3Cofig configs.S3Config) (*app, error) {
 	logger, err := NewLogger(appName, logConfig)
 	if err != nil {
 		return nil, err
@@ -79,8 +82,12 @@ func InitializeApp(appName configs.AppName, pgDbConfig configs.PgDbConfig, logCo
 	ordersHandler := orders.NewHandler(logger, orderssrvService)
 	ordersRoutes := orders.New(ordersHandler)
 	quotesrepoRepository := quotesrepo.New(logger, database)
-	quotessrvService := quotessrv.New(logger, quotesrepoRepository)
-	quotesHandler := quotes.NewHandler(logger, quotessrvService)
+	imagesrepoRepository := imagesrepo.New(logger, database)
+	s3 := NewS3Session(s3Cofig)
+	awsS3 := aws.NewS3(s3Cofig, s3)
+	imagessrvService := imagessrv.New(logger, imagesrepoRepository, awsS3)
+	quotessrvService := quotessrv.New(logger, quotesrepoRepository, imagessrvService)
+	quotesHandler := quotes.NewHandler(logger, quotessrvService, imagessrvService)
 	quotesRoutes := quotes.New(quotesHandler)
 	helperRepository := helper.NewHelperRepository(logger, rolesrepoRepository)
 	routeMiddleware := v1.NewMiddleware(logger, helperRepository, usersrepoRepository)

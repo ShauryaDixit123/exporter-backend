@@ -30,7 +30,7 @@ func (r *Repository) GetById(id rdbms.Id) (rdbms.RoleI, error) {
 		ROLE,
 		DISPLAY_VALUE,
 	).Where(goqu.Ex{
-		ID: id,
+		ID: id.Id,
 	}).Executor().ScanStruct(&role); er != nil {
 		return rdbms.RoleI{}, er
 	}

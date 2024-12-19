@@ -10,6 +10,10 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/credentials"
+	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aws/aws-sdk-go/service/s3"
 	"github.com/gin-contrib/cors"
 	_ "github.com/jackc/pgx/v4/stdlib"
 
@@ -124,6 +128,7 @@ func Initialize(config configs.Config) {
 		config.PgDbConfig,
 		config.LogConfig,
 		config.Context,
+		config.S3Config,
 	)
 
 	if err != nil {
@@ -131,4 +136,19 @@ func Initialize(config configs.Config) {
 	}
 
 	app.run(config.Port)
+}
+
+func NewS3Session(config configs.S3Config) *s3.S3 {
+	sess, er := session.NewSession(&aws.Config{
+		Region: aws.String(config.Region),
+		Credentials: credentials.NewStaticCredentials(
+			config.AccessKey,
+			config.AccessSecret,
+			"",
+		),
+	})
+	if er != nil {
+		panic(er)
+	}
+	return s3.New(sess)
 }
