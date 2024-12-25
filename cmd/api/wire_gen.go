@@ -25,6 +25,7 @@ import (
 	"exporterbackend/internal/handlers/api/v1/quotes"
 	"exporterbackend/internal/handlers/api/v1/users"
 	"exporterbackend/internal/handlers/api/v1/workflows"
+	"exporterbackend/internal/handlers/api/v1/ws"
 	"exporterbackend/internal/repositories/pgdb/accountsrepo"
 	"exporterbackend/internal/repositories/pgdb/countriesrepo"
 	"exporterbackend/internal/repositories/pgdb/currenciesrepo"
@@ -69,7 +70,8 @@ func InitializeApp(appName configs.AppName, pgDbConfig configs.PgDbConfig, logCo
 	locationsrepoRepository := locationsrepo.New(logger, database)
 	userssrvService := userssrv.New(logger, usersrepoRepository, accountsrepoRepository, locationsrepoRepository)
 	rolesrepoRepository := rolesrepo.New(logger, database)
-	usersHandler := users.NewHandler(logger, userssrvService, rolesrepoRepository)
+	v := NewSocketPoolMap()
+	usersHandler := users.NewHandler(logger, userssrvService, rolesrepoRepository, v)
 	usersRoutes := users.New(usersHandler)
 	workflowrepoRepository := workflowrepo.New(logger, database)
 	workflowssrvService := workflowssrv.New(logger, workflowrepoRepository, accountsrepoRepository)
@@ -91,7 +93,9 @@ func InitializeApp(appName configs.AppName, pgDbConfig configs.PgDbConfig, logCo
 	quotesRoutes := quotes.New(quotesHandler)
 	helperRepository := helper.NewHelperRepository(logger, rolesrepoRepository)
 	routeMiddleware := v1.NewMiddleware(logger, helperRepository, usersrepoRepository)
-	v1Routes := v1.New(routes, currenciesRoutes, usersRoutes, workflowsRoutes, ordersRoutes, quotesRoutes, routeMiddleware)
+	wsHandler := ws.NewHandler(logger, v)
+	wsRoutes := ws.New(wsHandler)
+	v1Routes := v1.New(routes, currenciesRoutes, usersRoutes, workflowsRoutes, ordersRoutes, quotesRoutes, routeMiddleware, wsRoutes)
 	engine := NewHttpEngine(v1Routes)
 	apiApp := NewApp(engine)
 	return apiApp, nil

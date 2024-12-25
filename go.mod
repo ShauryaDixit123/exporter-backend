@@ -21,7 +21,10 @@ require (
 	google.golang.org/protobuf v1.34.0
 )
 
-require github.com/aws/smithy-go v1.22.1 // indirect
+require (
+	github.com/aws/smithy-go v1.22.1 // indirect
+	github.com/gorilla/websocket v1.5.3 // indirect
+)
 
 require (
 	github.com/aws/aws-sdk-go v1.55.5 // indirect

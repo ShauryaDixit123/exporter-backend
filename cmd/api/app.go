@@ -6,6 +6,7 @@ import (
 	"exporterbackend/internal/configs"
 	v1 "exporterbackend/internal/handlers/api/v1"
 	"exporterbackend/pkg/logging"
+	"exporterbackend/pkg/socket"
 	"fmt"
 	"net/http"
 	"time"
@@ -91,8 +92,9 @@ func NewRequestContext() context.Context {
 func NewHttpEngine(
 	v1Routes v1.GroupRoutes,
 ) *gin.Engine {
-
 	r := gin.New()
+	// pool := socket.NewPool()
+	// go pool.Start()
 	r.RedirectTrailingSlash = true
 	// Recovery middleware recovers from any panics and writes a 500 if there was one.
 	r.Use(gin.CustomRecovery(func(c *gin.Context, recovered any) {
@@ -110,9 +112,10 @@ func NewHttpEngine(
 		MaxAge:           12 * time.Hour,
 	}))
 	r.GET("/ping", func(c *gin.Context) { c.JSON(200, gin.H{"message": "pong"}) })
-
+	// r.Handle("GET", "/ws", func(ctx *gin.Context) {
+	// 	serveWs(pool, ctx.Writer, ctx.Request)
+	// })
 	v1Routes.Initialize("/v1", r)
-
 	return r
 }
 
@@ -151,4 +154,9 @@ func NewS3Session(config configs.S3Config) *s3.S3 {
 		panic(er)
 	}
 	return s3.New(sess)
+}
+
+func NewSocketPoolMap() *map[string]*socket.Client {
+	var poolMap = make(map[string]*socket.Client)
+	return &poolMap
 }

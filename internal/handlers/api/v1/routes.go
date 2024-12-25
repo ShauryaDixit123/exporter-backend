@@ -7,6 +7,7 @@ import (
 	"exporterbackend/internal/handlers/api/v1/quotes"
 	"exporterbackend/internal/handlers/api/v1/users"
 	"exporterbackend/internal/handlers/api/v1/workflows"
+	"exporterbackend/internal/handlers/api/v1/ws"
 
 	"github.com/gin-gonic/gin"
 )
@@ -23,6 +24,7 @@ type Routes struct {
 	orderRoutes       orders.GroupRoutes
 	quoteRoutes       quotes.GroupRoutes
 	routesMiddlewares RouteMiddlewares
+	wsRoutes          ws.GroupRoutes
 }
 
 func New(
@@ -33,6 +35,7 @@ func New(
 	orderRoutes orders.GroupRoutes,
 	quoteRoutes quotes.GroupRoutes,
 	routesMiddlewares RouteMiddlewares,
+	wsRoutes ws.GroupRoutes,
 ) *Routes {
 	return &Routes{
 		countryRoutes:     countryRoutes,
@@ -42,6 +45,7 @@ func New(
 		orderRoutes:       orderRoutes,
 		quoteRoutes:       quoteRoutes,
 		routesMiddlewares: routesMiddlewares,
+		wsRoutes:          wsRoutes,
 	}
 }
 
@@ -62,6 +66,7 @@ func (ro *Routes) Initialize(prefix string, r gin.IRouter) {
 		ro.userRoutes.Initialize("/users", v1)
 		ro.countryRoutes.Initialize("/countries", v1)
 		ro.currencyRoutes.Initialize("/currencies", v1)
+		ro.wsRoutes.Initialize("/ws", v1)
 	}
 	v1.Use(ro.routesMiddlewares.PermissionsMiddleware())
 	{

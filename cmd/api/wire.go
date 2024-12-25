@@ -24,6 +24,7 @@ import (
 	"exporterbackend/internal/handlers/api/v1/quotes"
 	"exporterbackend/internal/handlers/api/v1/users"
 	"exporterbackend/internal/handlers/api/v1/workflows"
+	"exporterbackend/internal/handlers/api/v1/ws"
 	"exporterbackend/internal/repositories/pgdb/accountsrepo"
 	"exporterbackend/internal/repositories/pgdb/countriesrepo"
 	"exporterbackend/internal/repositories/pgdb/currenciesrepo"
@@ -52,6 +53,7 @@ func InitializeApp(
 		NewPgDbInstance,
 		NewGoquInstance,
 		NewS3Session,
+		NewSocketPoolMap,
 		//Repositories
 		helper.NewHelperRepository,
 		v1.NewMiddleware,
@@ -100,6 +102,7 @@ func InitializeApp(
 		wire.Bind(new(ports.OrdersService), new(*orderssrv.Service)),
 		wire.Bind(new(ports.QuotesService), new(*quotessrv.Service)),
 		wire.Bind(new(ports.ImagesService), new(*imagessrv.Service)),
+
 		//RouteHandlers
 		countries.NewHandler,
 		currencies.NewHandler,
@@ -107,6 +110,7 @@ func InitializeApp(
 		workflows.NewHandler,
 		orders.NewHandler,
 		quotes.NewHandler,
+		ws.NewHandler,
 		//RouteHandlerBindings
 		wire.Bind(new(countries.RoutesHandler), new(*countries.Handler)),
 		wire.Bind(new(currencies.RoutesHandler), new(*currencies.Handler)),
@@ -114,6 +118,7 @@ func InitializeApp(
 		wire.Bind(new(workflows.RoutesHandler), new(*workflows.Handler)),
 		wire.Bind(new(orders.RoutesHandler), new(*orders.Handler)),
 		wire.Bind(new(quotes.RoutesHandler), new(*quotes.Handler)),
+		wire.Bind(new(ws.RoutesHandler), new(*ws.Handler)),
 		//Group Routes
 		countries.New,
 		currencies.New,
@@ -121,6 +126,7 @@ func InitializeApp(
 		workflows.New,
 		orders.New,
 		quotes.New,
+		ws.New,
 		v1.New,
 
 		//Group Route Bindings
@@ -130,7 +136,7 @@ func InitializeApp(
 		wire.Bind(new(workflows.GroupRoutes), new(*workflows.Routes)),
 		wire.Bind(new(orders.GroupRoutes), new(*orders.Routes)),
 		wire.Bind(new(quotes.GroupRoutes), new(*quotes.Routes)),
-
+		wire.Bind(new(ws.GroupRoutes), new(*ws.Routes)),
 		wire.Bind(new(v1.GroupRoutes), new(*v1.Routes)),
 
 		NewHttpEngine,
